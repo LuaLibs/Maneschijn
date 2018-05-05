@@ -1,0 +1,1 @@
+-- $USE libs/maneschijn_core
