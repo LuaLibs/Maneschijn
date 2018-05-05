@@ -3,6 +3,9 @@
 .project
 .settings
 
+# MKL shit
+MKL*
+*MKL*
 
 # Compiled Lua sources
 luac.out
