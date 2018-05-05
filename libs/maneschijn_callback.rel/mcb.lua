@@ -1,5 +1,5 @@
 --[[
-        maneschijn.lua
+        mcb.lua
 	(c) 2018 Jeroen Petrus Broks.
 	
 	This Source Code Form is subject to the terms of the 
@@ -8,12 +8,8 @@
 	http://mozilla.org/MPL/2.0/.
         Version: 18.05.06
 ]]
--- $USE libs/maneschijn_core
--- $USE libs/maneschijn_callback
+local cb = { Desc='Callback'}
 
-local schijn = {
-    desc = "Just a module which can include it all!"
-}
+-- The actual code comes later!
 
-
-return schijn
+return {}
