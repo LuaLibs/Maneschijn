@@ -12,3 +12,8 @@ When this notice has been removed, you can do it (although it may then still be 
 
 
 ![](https://github.com/LuaLibs/Maneschijn/blob/master/repoass/maneschijn.png?raw=true)
+
+
+# Etymology
+
+Since "Lua" means "Moon" in Portuguese, Maneschijn is a bit of a pun to that as it means "Moonshine" in Dutch. :P
