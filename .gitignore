@@ -1,3 +1,9 @@
+# Eclipse shit I don't want
+.buildpath
+.project
+.settings
+
+
 # Compiled Lua sources
 luac.out
 
