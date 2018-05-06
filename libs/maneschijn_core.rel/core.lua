@@ -65,9 +65,9 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
          local uprio = math.ceil(self.priority) or math.ceil(core.maxpriority/2)
          -- Add stuff into the right priority list         
          if self.id and maan[self.id] and maan[self.id].Draw then 
-            priolist[uprio][#priolist[uprio]+1] = maan[self.id].Draw
+            priolist[uprio][#priolist[uprio]+1] = {maan[self.id].Draw,self}
          elseif self.Draw then
-            priolist[uprio][#priolist[uprio]+1] = self.Draw
+            priolist[uprio][#priolist[uprio]+1] = {self.Draw,self}
          end
          -- Recurse
          for kid in each(self.kids or {}) do
@@ -80,7 +80,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
          local maxp,minp=core.maxprio,1
          if prio then maxp,minp=prio,prio end
          for iprio = maxp,minp,-1 do
-             for d in each(priolist[iprio]) do d(self) end
+             for d in each(priolist[iprio]) do d[1](d[2]) end
          end                             
      end       
 }
