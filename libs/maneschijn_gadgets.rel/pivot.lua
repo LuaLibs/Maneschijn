@@ -9,10 +9,11 @@
         Version: 18.05.07
 ]]
 -- $USE libs/maneschijn_core
+-- $USE libs/nothing
 local core=maneschijn_core
 
 
-local pivot={}
+local pivot={Draw=nothing}
 
 function pivot:onCreate()
     self.w=self.w or 1
