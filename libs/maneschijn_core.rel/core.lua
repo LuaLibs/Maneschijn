@@ -44,7 +44,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
         assert(not self.cantkill , "You tried to kill a gadget you cannot kill");
         (self.kids.onfree or nothing)()
         if self.kids then
-           for kid in each(self.kids) do kid:free() end -- A kid MUST have free!
+           for kid in each(self.kids or childless) do kid:free() end -- A kid MUST have free!
         end
         self.parent=nil -- Very important one too!
         self.freed=true
@@ -64,7 +64,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
               self.TimerValue=0
            end
         end
-        for _,kid in pairs(self.kids or {}) do
+        for _,kid in pairs(self.kids or childless) do
             kid:UpdateTimer()
         end 
      end,
