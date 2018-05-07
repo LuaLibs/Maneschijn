@@ -26,7 +26,7 @@ local core = {
    maxpriority=3
 }
 
-
+local childless = {} -- must always be an empty table, but it savers performance for having to create and dispose a table for each Method attachment to a childless gadget
 local gadgettypes = {}
 local pures = {
      absolute = function(gadget,t) return gadget[t] or 0 end,
@@ -84,7 +84,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
             priolist[uprio][#priolist[uprio]+1] = {self.Draw,self}
          end
          -- Recurse
-         for _,kid in pairs(self.kids or {}) do
+         for _,kid in pairs(self.kids or childless) do
              local tp = kid:PerformDraw('RECURSE')
              for ip,lp in ipairs(tp) do for f in each(lp) do priolist[ip][#priolist[ip]+1]=f end end
          end          
@@ -125,7 +125,6 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
 
 local superior_methods = {  Draw=nothing }
 
-local childless = {} -- must always be an empty table, but it savers performance for having to create and dispose a table for each Method attachment to a childless gadget
 
 
 core.MainGadget = {
@@ -198,7 +197,7 @@ function core.StatCalc(gadget)
            error("I have no use for a "..type(gadget[s]).." for field "..s)   
         end         
     end
-    for _,kid in pairs(gadget.kids) do core.StatCalc(kid) end
+    for _,kid in pairs(gadget.kids or childless) do core.StatCalc(kid) end
 end
 
 -- This is the 'main' gadget. Best is NOT to alter it (unless you KNOW what you are doing)
