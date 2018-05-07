@@ -8,7 +8,7 @@
 	http://mozilla.org/MPL/2.0/.
         Version: 18.05.06
 ]]
--- $USE libs/maneschijn_core
+-- $USE libs/maneschijn_gadgets
 -- $USE libs/maneschijn_callback
 
 local schijn = {
