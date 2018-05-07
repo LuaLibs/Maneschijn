@@ -73,8 +73,8 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
          -- Not visible? Then get outta here!
          if self.Visible==false then return end
          -- init
-         local priolist = {}
-         local uprio = math.ceil(self.priority) or math.ceil(core.maxpriority/2)
+         local priolist = {}         
+         local uprio = math.ceil(self.priority or core.maxpriority/2)
          -- Add stuff into the right priority list         
          if self.id and maan[self.id] and maan[self.id].Draw then 
             priolist[uprio][#priolist[uprio]+1] = {maan[self.id].Draw,self}
