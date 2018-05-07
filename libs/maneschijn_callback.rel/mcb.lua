@@ -30,7 +30,7 @@ function love.run()
       -- Only copied for safety's sake
       -- And besides timed gadgets could need this.
       --if love.timer then love.timer.step() end
-      assert(love.time,"Maneschijn cannot work without the love timer!")
+      assert(love.timer,"Maneschijn cannot work without the love timer!")
       love.timer.step()
       local dt = 0       
       
