@@ -42,7 +42,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
     
     free = function(self) -- VERY VERY important. Only release gadgets through the "free" method If you just put them to nil before releasing them you will get memory leaks do to a bug in Lua's garbage collector in 'cyclic references' in tables!
         assert(not self.cantkill , "You tried to kill a gadget you cannot kill");
-        (self.kids.onfree or nothing)()
+        (self.onFree or nothing)()
         if self.kids then
            for kid in each(self.kids or childless) do kid:free() end -- A kid MUST have free!
         end
