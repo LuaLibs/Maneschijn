@@ -18,6 +18,7 @@ local algemeen={}
 function CreateGadget(gadget)
      core.StatCalc(gadget)
      core.AttachMethods(gadget)
+     return gadget
 end
 
 return algemeen
