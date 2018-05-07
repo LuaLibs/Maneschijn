@@ -8,6 +8,11 @@
 	http://mozilla.org/MPL/2.0/.
         Version: 18.05.07
 ]]
+
+
+-- $USE libs/maneschijn_core
+local core=maneschijn_core
+
 local algemeen={}
 
 function CreateGadget(gadget)
