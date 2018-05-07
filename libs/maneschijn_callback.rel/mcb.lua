@@ -11,15 +11,42 @@
 
 -- $USE libs/maneschijn_core
 
+
+
 local core = maneschijn_core
 local cb = { Desc='Callback'}
 
 
 cb.handlers={
+   -- Left to love for the time being
+   focus = love.handlers.focus,
+   visible = love.handlers.visible,
+   
+   -- Resize
+   resize = function (w, h)
+      -- Automatically resize all required gadgets
+      core.MainGadget:ReCreate()
+      -- Call back features that may be need to be called
+      if maan.resize then return maan.resize(w, h) end      
+   end,
+   
+   
+   -- Accept files
+   my_accept=function (file,ftype)
+      (maan["accept"..ftype] or maan.accept)(file,ftype)         
+   end,
+   
+   directorydropped=function(dir) cb.handlers.my_accept(dir,'dir') end,
+   filedropped=function(file) cb.handlers.my_accept(file:getFilename(),'file') end
+   
+   
+   
+   
 }
 
 
 function love.run()
+      local edebug,xedebug = false,false
       local mj,mi,re,cod = love.getVersion()
       assert(mi>11 or mj>0,"GJCR6 requires LOVE 0.11 or higher")
       -- There no need to use a different function for this
@@ -48,6 +75,7 @@ function love.run()
                   end
                end
                --love.handlers[name](a,b,c,d,e,f)
+               if edebug or (xedebug and (not cbhandlers[name])) then print("Event triggered: ",name,"\nParameters: ",a,b,c,d,e,f) end
                (cb.handlers[name] or love.handlers[name])(a,b,c,d,e,f)
                -- Please note the call to love for non-existent handlers is only a temporary measure to prevent bugs and crashes, but is deprecated from the start!
            end
