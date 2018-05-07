@@ -26,6 +26,8 @@ local core = {
    maxpriority=3
 }
 
+local gadgettypes = {}
+
 local methoden = { -- This is a bunch of methods and subvariables ALL gadgets should have
     
     free = function(self) -- VERY VERY important. Only release gadgets through the "free" method If you just put them to nil before releasing them you will get memory leaks do to a bug in Lua's garbage collector in 'cyclic references' in tables!
@@ -52,7 +54,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
               self.TimerValue=0
            end
         end
-        for kid in each(self.kids or {}) do
+        for _,kid in pairs(self.kids or {}) do
             kid:UpdateTimer()
         end 
      end,
@@ -70,7 +72,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
             priolist[uprio][#priolist[uprio]+1] = {self.Draw,self}
          end
          -- Recurse
-         for kid in each(self.kids or {}) do
+         for _,kid in pairs(self.kids or {}) do
              local tp = kid:PerformDraw('RECURSE')
              for ip,lp in ipairs(tp) do for f in each(lp) do priolist[ip][#priolist[ip]+1]=f end end
          end          
@@ -85,16 +87,45 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
      end       
 }
 
+local superior_methods = {   
+}
+
+local childless = {} -- must always be an empty table, but it savers performance for having to create and dispose a table for each Method attachment to a childless gadget
+
 -- Is in normal setups not required in your code and called automatically when needed
-function core.AttachMethods(gadget,meths)
+function core.AttachMethods(gadget,meths,ignorekids)
     for mk,mv in pairs(meths or methoden) do
         gadget[mk]=mv
     end
+    assert(gadgettypes[gadget.kind] or gadget.superior,"I do not know gadget kind: "..sval(gadget.kind))
+    local kind
+    if gadget.superior then kind=superior_methods else kind=gadgettypes[gadget.kind] end
+    for mk,mv in pairs(kind) do
+        gadget[mk]=mv
+    end
+    if ignorekids then return end
+    if not gadget.superior then 
+       gadget.parent = gadget.parent or core.MainGadget
+       local found=false
+       for _,kid in pairs(gadget.parent.kids) do
+           found = found or (kid==gadget)
+       end
+       if not found then gadget.parent.kids[#gadget.parent.kids+1]=gadget end
+    end 
+    for _,kid in pairs(gadget.kids or childless) do
+        core.AttachMethods(kid,meths) 
+        kid.parent=gadget
+    end
 end    
+
+function core.RegisterGadget(kind,data)
+    gadgettypes[kind]=data
+end
 
 
 -- This is the 'main' gadget. Best is NOT to alter it (unless you KNOW what you are doing)
 core.MainGadget = {
+       superior=true,
        cantkill=true,
        x=0,y=0,
        w=1,h=1,
@@ -102,6 +133,9 @@ core.MainGadget = {
        kids={} 
 }
 core.AttachMethods(core.MainGadget)
+
+
+
 
 
 
