@@ -88,7 +88,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
          end          
          if prio=='RECURSE' then return priolist end -- When 'RECURSE' is set, we're just gathering 
          -- Show everything according to priority
-         assert(core.maxprio>=1,"Invalid maxprio! Must be 1 or higher!")
+         assert(core.maxpriority>=1,"Invalid maxprio! Must be 1 or higher!")
          local maxp,minp=core.maxprio,1
          if prio then maxp,minp=prio,prio end
          for iprio = maxp,minp,-1 do
