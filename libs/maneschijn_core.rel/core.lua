@@ -26,7 +26,17 @@ local core = {
    maxpriority=3
 }
 
+
 local gadgettypes = {}
+local pures = {
+     absolute = function(gadget,t) return gadget[t] or 0 end,
+     screenw  = function(gadget,t) local width, height = love.window.getDesktopDimensions(  ) return width *gadget[t] end,
+     screenh  = function(gadget,t) local width, height = love.window.getDesktopDimensions(  ) return height*gadget[t] end,
+     windoww  = function(gadget,t) local width, height = love.window.getDimensions( )         return width *gadget[t] end,
+     windowh  = function(gadget,t) local width, height = love.window.getDimensions( )         return height*gadget[t] end,
+     parent   = function(gadget,t) return gadget.Parent:Stat(t)*gadget[t]                                             end
+     
+}
 
 local methoden = { -- This is a bunch of methods and subvariables ALL gadgets should have
     
@@ -84,7 +94,22 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
          for iprio = maxp,minp,-1 do
              for d in each(priolist[iprio]) do d[1](d[2]) end
          end                             
-     end       
+     end ,
+     
+     ReCreate = function(self) self:onCreate() end,
+     
+     Pure = function(self,truef,depf)
+        return pures[self.depf or 'absolute'](self,truef)
+     end,
+     
+     Stat = function(self,s)
+         return self:Pure(s,"d"..s)
+     end,
+     
+     TX = function(self) return self.parent.Stat("x")+self.Stat("x") end,           
+     TY = function(self) return self.parent.Stat("y")+self.Stat("y") end,
+     TW = function(self) return self.Stat("w") end,
+     TH = function(self) return self.Stat("h") end,                
 }
 
 local superior_methods = {   
@@ -103,6 +128,7 @@ function core.AttachMethods(gadget,meths,ignorekids)
     for mk,mv in pairs(kind) do
         gadget[mk]=mv
     end
+    (gadget.onCreate or nothing)(gadget)
     if ignorekids then return end
     if not gadget.superior then 
        gadget.parent = gadget.parent or core.MainGadget
@@ -122,6 +148,11 @@ function core.RegisterGadget(kind,data)
     gadgettypes[kind]=data
 end
 
+-- Free all gadgets tied to the MainGadget
+function core.FreeAll()
+     for _,gadget in pairs(core.MainGadget.kids) do gadget:free() end
+end
+
 
 -- This is the 'main' gadget. Best is NOT to alter it (unless you KNOW what you are doing)
 core.MainGadget = {
@@ -129,7 +160,7 @@ core.MainGadget = {
        cantkill=true,
        x=0,y=0,
        w=1,h=1,
-       dw='screen',dh='screen',
+       dw='windoww',dh='windowh',
        kids={} 
 }
 core.AttachMethods(core.MainGadget)
