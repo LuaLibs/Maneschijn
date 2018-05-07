@@ -153,6 +153,32 @@ function core.FreeAll()
      for _,gadget in pairs(core.MainGadget.kids) do gadget:free() end
 end
 
+local sct = {'x','y','w','h'}
+local scd = {x='w',w='w',y='h',h='h'}
+function core.StatCalc(gadget)
+    for s in each(sct) do
+        gadget[s] = gadget[s] or 0
+        if type(gadget[s])=='number' then
+           -- Do nothing! All is fine!           
+        elseif type(gadget[s])=='string' then
+           local r = s:tonumber() or 0
+           if suffixed(s,"%%%") then
+              r = Left(s,#s-3).tonumber() or 0
+              gadget['d'..s]='screen'..scd[s]
+           elseif suffixed(s,"%%") then   
+              r = Left(s,#s-2).tonumber() or 0
+              gadget['d'..s]='window'..scd[s]
+           elseif suffixed(s,"%") then   
+              r = Left(s,#s-1).tonumber() or 0
+              gadget['d'..s]='parent'
+           end
+           gadget[s]=r
+        else 
+           error("I have no use for a "..type(gadget[s]).." for field "..s)   
+        end         
+    end
+    for _,kid in pairs(gadget.kids) do core.StatCalc(kid) end
+end
 
 -- This is the 'main' gadget. Best is NOT to alter it (unless you KNOW what you are doing)
 core.MainGadget = {
