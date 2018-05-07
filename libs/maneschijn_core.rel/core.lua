@@ -107,7 +107,13 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
          end                             
      end ,
      
-     ReCreate = function(self) self:onCreate() end,
+     ReCreate = function(self)
+        print("Recreating:"..(self.kind or 'superior')) 
+        if self.onCreate then self:onCreate() end
+        for _,kid in pairs(self.kids or childless) do
+           kid:ReCreate()
+        end            
+     end,
      
      Pure = function(self,truef,depf)
         return pures[depf or 'absolute'](self,truef)
