@@ -165,15 +165,15 @@ function core.StatCalc(gadget)
         if type(gadget[s])=='number' then
            -- Do nothing! All is fine!           
         elseif type(gadget[s])=='string' then
-           local r = s:tonumber() or 0
+           local r = tonumber(s) or 0
            if suffixed(s,"%%%") then
-              r = (Left(s,#s-3).tonumber() or 0)/100
+              r = (tonumber(Left(s,#s-3)) or 0)/100
               gadget['d'..s]='screen'..scd[s]
            elseif suffixed(s,"%%") then   
-              r = (Left(s,#s-2).tonumber() or 0)/100
+              r = (tonumber(Left(s,#s-2)) or 0)/100
               gadget['d'..s]='window'..scd[s]
            elseif suffixed(s,"%") then   
-              r = (Left(s,#s-1).tonumber() or 0)/100
+              r = (tonumber(Left(s,#s-1)) or 0)/100
               gadget['d'..s]='parent'
            end
            gadget[s]=r
