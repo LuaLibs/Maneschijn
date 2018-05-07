@@ -35,6 +35,7 @@ function kquad:onCreate()
      assert(self.texture,"No texturedata found")
      self.w = self.w or 1
      self.h = self.h or 1
+     core.StatCalc(self)
      assert(self.w>0 and self.h>0,"Invalid width and height\n"..serialize("gadget",self))
      self:texload()
 end
