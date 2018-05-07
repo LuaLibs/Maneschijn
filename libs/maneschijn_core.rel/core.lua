@@ -32,8 +32,8 @@ local pures = {
      absolute = function(gadget,t) return gadget[t] or 0 end,
      screenw  = function(gadget,t) local width, height = love.window.getDesktopDimensions(  ) return width *gadget[t] end,
      screenh  = function(gadget,t) local width, height = love.window.getDesktopDimensions(  ) return height*gadget[t] end,
-     windoww  = function(gadget,t) local width, height = love.window.getDimensions( )         return width *gadget[t] end,
-     windowh  = function(gadget,t) local width, height = love.window.getDimensions( )         return height*gadget[t] end,
+     windoww  = function(gadget,t) local width, height = love.graphics.getDimensions( )         return width *gadget[t] end,
+     windowh  = function(gadget,t) local width, height = love.graphics.getDimensions( )         return height*gadget[t] end,
      parent   = function(gadget,t) return gadget.Parent:Stat(t)*gadget[t]                                             end
      
 }
