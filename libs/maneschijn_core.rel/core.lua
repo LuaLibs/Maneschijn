@@ -73,7 +73,8 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
          -- Not visible? Then get outta here!
          if self.Visible==false then return end
          -- init
-         local priolist = {}         
+         local priolist = {}   
+         for i=1,core.maxpriority do priolist[i]={} end      
          local uprio = math.ceil(self.priority or core.maxpriority/2)
          -- Add stuff into the right priority list         
          if self.id and maan[self.id] and maan[self.id].Draw then 
@@ -93,6 +94,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
          --error("prio = "..type(prio))         
          if prio then maxp,minp=prio,prio end
          -- error("maxp = "..type(maxp))
+         -- error(serialize('priolist',priolist))
          for iprio = maxp,minp,-1 do
              for d in each(priolist[iprio]) do d[1](d[2]) end
          end                             
