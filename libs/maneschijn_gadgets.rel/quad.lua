@@ -21,6 +21,7 @@ function kquad:initquad()
     local y = self.insert_y or 0
     local sw,sh=ImageSizes(self.imgtexture)
     local width,height=self.w,self.h
+    self.imgtexture:setWrap(self.xwrap or 'repeat',self.ywrap or 'repeat')
     self.quadtexture = love.graphics.newQuad( x, y, width, height, sw, sh )
 end
 
@@ -54,6 +55,8 @@ function CreateQuad(x,y,w,h,image,parent)
           y=y,
           w=w,
           h=h,
+          xwrap='repeat',
+          ywrap='repeat',
           image=image,
           parent=parent,
           kids={}          
