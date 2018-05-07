@@ -120,7 +120,29 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
      TX = function(self) if self.superior then return 0 else return self.parent:Stat("x")+self:Stat("x") end end,           
      TY = function(self) if self.superior then return 0 else return self.parent:Stat("y")+self:Stat("y") end end,
      TW = function(self) return self:Stat("w") end,
-     TH = function(self) return self:Stat("h") end,                
+     TH = function(self) return self:Stat("h") end,    
+     
+     Parents = function(self,donotincludeself) -- For use in for routines. Goes way back to all parents until there are none any more.
+        local wg = self
+        local i=0
+        local gtab = {}
+        if not donotincludeself then gtab[1]=self end
+        while not wg.superior do
+            wg=wg.parent
+            gtab[#gtab+1]=wg
+        end
+        return function()
+           i=i+1
+           return gtab[i]
+        end
+     end,
+     
+     Disabled=function(self)
+        for gad in self:Parents() do
+            if gad.Enabled==false then return true end
+        end
+        return false
+     end                   
 }
 
 local superior_methods = {  Draw=nothing }
