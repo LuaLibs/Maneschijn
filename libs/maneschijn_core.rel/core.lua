@@ -70,7 +70,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
      end,
      
      PerformDraw = function(self,prio)
-         local pddebug=nil -- set to 0 if in use, set to false or nil if not!
+         local pddebug=0 -- set to 0 if in use, set to false or nil if not!
          -- Not visible? Then get outta here!
          if self.Visible==false then return end
          -- init
@@ -123,8 +123,8 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
          return self:Pure(s,self["d"..s])
      end,
      
-     TX = function(self) if self.superior then return 0 else return self.parent:Stat("x")+self:Stat("x") end end,           
-     TY = function(self) if self.superior then return 0 else return self.parent:Stat("y")+self:Stat("y") end end,
+     TX = function(self) if self.superior then return 0 else return self.parent:TX()+self:Stat("x") end end,           
+     TY = function(self) if self.superior then return 0 else return self.parent:TY()+self:Stat("y") end end,
      TW = function(self) return self:Stat("w") end,
      TH = function(self) return self:Stat("h") end,    
      
@@ -148,7 +148,24 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
             if gad.Enabled==false then return true end
         end
         return false
-     end                   
+     end,     
+     
+     SetColor=function(self)
+        love.graphics.setColor(self.r or 1, self.g or 1, self.b or 1,self.alpha or 1)
+     end,
+          
+     Color= function(self,r,g,b,alpha,scale)
+         self.r=(r or 255)/(scale or 1)
+         self.g=(g or 255)/(scale or 1)
+         self.b=(b or 255)/(scale or 1)
+         self.alpha=(alpha or scale)/(scale or 1)
+     end,
+     
+     HexColor=function(self,hex)
+        assert(#hex==6,"Invalid color code")
+        self:color(tonumber("0x"..mid(hex,1,2)),tonumber("0x"..mid(hex,3,2)),tonumber("0x"..mid(hex,5,2)),255,255)
+     end   
+                          
 }
 
 local superior_methods = {  Draw=nothing }
