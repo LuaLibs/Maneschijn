@@ -74,7 +74,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
      end,
      
      PerformDraw = function(self,prio)
-         local pddebug=0 -- set to 0 if in use, set to false or nil if not!
+         local pddebug=nil -- set to 0 if in use, set to false or nil if not!
          -- Not visible? Then get outta here!
          if self.Visible==false then return end
          -- init
