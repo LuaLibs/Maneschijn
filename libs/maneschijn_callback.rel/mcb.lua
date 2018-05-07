@@ -23,7 +23,7 @@ cb.handlers={
    
    -- focus
    focus = function(gotfocus)
-      maan.focus(gotfocus)
+      (maan.focus or nothing)(gotfocus)
    end,   
    
    -- Resize
