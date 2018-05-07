@@ -26,15 +26,19 @@ local core = {
    maxpriority=3
 }
 
+local sct = {'x','y','w','h'}
+local scd = {x='w',w='w',y='h',h='h'}
+
+
 local childless = {} -- must always be an empty table, but it savers performance for having to create and dispose a table for each Method attachment to a childless gadget
 local gadgettypes = {}
 local pures = {
-     absolute = function(gadget,t) return gadget[t] or 0 end,
-     screenw  = function(gadget,t) local width, height = love.window.getDesktopDimensions(  )  return width *gadget[t] end,
-     screenh  = function(gadget,t) local width, height = love.window.getDesktopDimensions(  )  return height*gadget[t] end,
-     windoww  = function(gadget,t) local width, height = love.graphics.getDimensions( )        return width *gadget[t] end,
-     windowh  = function(gadget,t) local width, height = love.graphics.getDimensions( )        return height*gadget[t] end,
-     parent   = function(gadget,t) return (gadget.parent or core.MainGadget):Stat(t)*gadget[t] end
+     absolute = function(gadget,t,d) return gadget[t] or 0 end,
+     screenw  = function(gadget,t,d) local width, height = love.window.getDesktopDimensions(  )  return width *gadget[t] end,
+     screenh  = function(gadget,t,d) local width, height = love.window.getDesktopDimensions(  )  return height*gadget[t] end,
+     windoww  = function(gadget,t,d) local width, height = love.graphics.getDimensions( )        return width *gadget[t] end,
+     windowh  = function(gadget,t,d) local width, height = love.graphics.getDimensions( )        return height*gadget[t] end,
+     parent   = function(gadget,t,d) return (gadget.parent or core.MainGadget):Stat(d)*gadget[t] end
      
 }
 
@@ -100,7 +104,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
              for d in each(priolist[iprio]) do                  
                  d[1](d[2]) 
                  if pddebug then
-                    love.graphics.print("Drawing a "..(d[2].kind or "superior").." at ("..d[2]:TX()..","..d[2]:TY()..") >> "..d[2]:TW().."x"..d[2]:TH().."   ("..(d[2].dw or "nil").."/"..(d[2].dh or "nil")..")",0,pddebug)
+                    love.graphics.print(iprio..": Drawing a "..(d[2].kind or "superior").." at ("..d[2]:TX()..","..d[2]:TY()..") >> "..d[2]:TW().."x"..d[2]:TH().."   ("..(d[2].dw or "nil").."/"..(d[2].dh or "nil")..")   "..(d[2].dbgid or "noid").." from parent "..((d[2].parent or {}).dbgid or "idlessparent"),0,pddebug)
                     pddebug = pddebug + 20
                  end
              end
@@ -116,11 +120,11 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
      end,
      
      Pure = function(self,truef,depf)
-        return pures[depf or 'absolute'](self,truef)
+        return pures[depf or 'absolute'](self,truef,scd[truef])
      end,
      
      Stat = function(self,s)
-         return self:Pure(s,self["d"..s])
+         return self:Pure(s,self["d"..scd[s]])
      end,
      
      TX = function(self) if self.superior then return 0 else return self.parent:TX()+self:Stat("x") end end,           
@@ -173,6 +177,7 @@ local superior_methods = {  Draw=nothing }
 
 
 core.MainGadget = {
+       dbgid="superior",
        superior=true,
        cantkill=true,
        x=0,y=0,
@@ -217,8 +222,6 @@ function core.FreeAll()
      for _,gadget in pairs(core.MainGadget.kids) do gadget:free() end
 end
 
-local sct = {'x','y','w','h'}
-local scd = {x='w',w='w',y='h',h='h'}
 function core.StatCalc(gadget)
     for s in each(sct) do
         gadget[s] = gadget[s] or 0
