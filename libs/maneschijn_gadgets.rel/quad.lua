@@ -20,7 +20,7 @@ function kquad:initquad()
     local x = self.insert_x or 0
     local y = self.insert_y or 0
     local sw,sh=ImageSizes(self.imgtexture)
-    local width,height=self.w,self.h
+    local width,height=self:TW(),self:TH()
     self.imgtexture:setWrap(self.xwrap or 'repeat',self.ywrap or 'repeat')
     self.quadtexture = love.graphics.newQuad( x, y, width, height, sw, sh )
 end
@@ -43,7 +43,7 @@ function kquad:onResize() self:initquar() end
 
 function kquad:Draw()
      self.frame=self.frame or 1
-     QuadImage(self.imgtexture,self.quadtexture,self.x,self.y,self.frame)
+     QuadImage(self.imgtexture,self.quadtexture,self:TX(),self:TY(),self.frame)
 end
 
 

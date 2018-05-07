@@ -30,11 +30,11 @@ local core = {
 local gadgettypes = {}
 local pures = {
      absolute = function(gadget,t) return gadget[t] or 0 end,
-     screenw  = function(gadget,t) local width, height = love.window.getDesktopDimensions(  ) return width *gadget[t] end,
-     screenh  = function(gadget,t) local width, height = love.window.getDesktopDimensions(  ) return height*gadget[t] end,
-     windoww  = function(gadget,t) local width, height = love.graphics.getDimensions( )         return width *gadget[t] end,
-     windowh  = function(gadget,t) local width, height = love.graphics.getDimensions( )         return height*gadget[t] end,
-     parent   = function(gadget,t) return gadget.Parent:Stat(t)*gadget[t]                                             end
+     screenw  = function(gadget,t) local width, height = love.window.getDesktopDimensions(  )  return width *gadget[t] end,
+     screenh  = function(gadget,t) local width, height = love.window.getDesktopDimensions(  )  return height*gadget[t] end,
+     windoww  = function(gadget,t) local width, height = love.graphics.getDimensions( )        return width *gadget[t] end,
+     windowh  = function(gadget,t) local width, height = love.graphics.getDimensions( )        return height*gadget[t] end,
+     parent   = function(gadget,t) return (gadget.parent or core.MainGadget):Stat(t)*gadget[t] end
      
 }
 
@@ -100,7 +100,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
              for d in each(priolist[iprio]) do                  
                  d[1](d[2]) 
                  if pddebug then
-                    love.graphics.print("Drawing a "..d[2].kind.." at ("..d[2]:TX()..","..d[2]:TY()..")",0,pddebug)
+                    love.graphics.print("Drawing a "..(d[2].kind or "superior").." at ("..d[2]:TX()..","..d[2]:TY()..") >> "..d[2]:TW().."x"..d[2]:TH().."   ("..(d[2].dw or "nil").."/"..(d[2].dh or "nil")..")",0,pddebug)
                     pddebug = pddebug + 20
                  end
              end
@@ -110,23 +110,32 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
      ReCreate = function(self) self:onCreate() end,
      
      Pure = function(self,truef,depf)
-        return pures[self.depf or 'absolute'](self,truef)
+        return pures[depf or 'absolute'](self,truef)
      end,
      
      Stat = function(self,s)
-         return self:Pure(s,"d"..s)
+         return self:Pure(s,self["d"..s])
      end,
      
-     TX = function(self) return self.parent:Stat("x")+self:Stat("x") end,           
-     TY = function(self) return self.parent:Stat("y")+self:Stat("y") end,
+     TX = function(self) if self.superior then return 0 else return self.parent:Stat("x")+self:Stat("x") end end,           
+     TY = function(self) if self.superior then return 0 else return self.parent:Stat("y")+self:Stat("y") end end,
      TW = function(self) return self:Stat("w") end,
      TH = function(self) return self:Stat("h") end,                
 }
 
-local superior_methods = {   
-}
+local superior_methods = {  Draw=nothing }
 
 local childless = {} -- must always be an empty table, but it savers performance for having to create and dispose a table for each Method attachment to a childless gadget
+
+
+core.MainGadget = {
+       superior=true,
+       cantkill=true,
+       x=0,y=0,
+       w=1,h=1,
+       dw='windoww',dh='windowh',
+       kids={} 
+}
 
 -- Is in normal setups not required in your code and called automatically when needed
 function core.AttachMethods(gadget,meths,ignorekids)
@@ -193,14 +202,6 @@ function core.StatCalc(gadget)
 end
 
 -- This is the 'main' gadget. Best is NOT to alter it (unless you KNOW what you are doing)
-core.MainGadget = {
-       superior=true,
-       cantkill=true,
-       x=0,y=0,
-       w=1,h=1,
-       dw='windoww',dh='windowh',
-       kids={} 
-}
 core.AttachMethods(core.MainGadget)
 
 
