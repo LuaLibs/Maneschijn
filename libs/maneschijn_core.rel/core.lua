@@ -70,6 +70,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
      end,
      
      PerformDraw = function(self,prio)
+         local pddebug=0 -- set to 0 if in use, set to false or nil if not!
          -- Not visible? Then get outta here!
          if self.Visible==false then return end
          -- init
@@ -96,7 +97,13 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
          -- error("maxp = "..type(maxp))
          -- error(serialize('priolist',priolist))
          for iprio = maxp,minp,-1 do
-             for d in each(priolist[iprio]) do d[1](d[2]) end
+             for d in each(priolist[iprio]) do                  
+                 d[1](d[2]) 
+                 if pddebug then
+                    love.graphics.print("Drawing a "..d[2].kind.." at ("..d[2]:TX()..","..d[2]:TY()..")",0,pddebug)
+                    pddebug = pddebug + 20
+                 end
+             end
          end                             
      end ,
      
@@ -110,10 +117,10 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
          return self:Pure(s,"d"..s)
      end,
      
-     TX = function(self) return self.parent.Stat("x")+self.Stat("x") end,           
-     TY = function(self) return self.parent.Stat("y")+self.Stat("y") end,
-     TW = function(self) return self.Stat("w") end,
-     TH = function(self) return self.Stat("h") end,                
+     TX = function(self) return self.parent:Stat("x")+self:Stat("x") end,           
+     TY = function(self) return self.parent:Stat("y")+self:Stat("y") end,
+     TW = function(self) return self:Stat("w") end,
+     TH = function(self) return self:Stat("h") end,                
 }
 
 local superior_methods = {   
@@ -162,18 +169,19 @@ local scd = {x='w',w='w',y='h',h='h'}
 function core.StatCalc(gadget)
     for s in each(sct) do
         gadget[s] = gadget[s] or 0
+        local vs = gadget[s]
         if type(gadget[s])=='number' then
            -- Do nothing! All is fine!           
         elseif type(gadget[s])=='string' then
-           local r = tonumber(s) or 0
-           if suffixed(s,"%%%") then
-              r = (tonumber(Left(s,#s-3)) or 0)/100
+           local r = tonumber(vs) or 0
+           if suffixed(vs,"%%%") then
+              r = (tonumber(left(vs,#vs-3)) or 0)/100
               gadget['d'..s]='screen'..scd[s]
-           elseif suffixed(s,"%%") then   
-              r = (tonumber(Left(s,#s-2)) or 0)/100
+           elseif suffixed(vs,"%%") then   
+              r = (tonumber(left(vs,#vs-2)) or 0)/100
               gadget['d'..s]='window'..scd[s]
-           elseif suffixed(s,"%") then   
-              r = (tonumber(Left(s,#s-1)) or 0)/100
+           elseif suffixed(vs,"%") then   
+              r = (tonumber(left(vs,#vs-1)) or 0)/100
               gadget['d'..s]='parent'
            end
            gadget[s]=r
