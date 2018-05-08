@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 18.05.07
+        Version: 18.05.08
 ]]
 -- Some core code will appear here, once development has begun
 
@@ -154,8 +154,12 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
         return false
      end,     
      
-     SetColor=function(self)
-        love.graphics.setColor(self.r or 1, self.g or 1, self.b or 1,self.alpha or 1)
+     SetColor=function(self,pref)
+        if type(pref)=="string" then
+           love.graphics.setColor(self[pref.."r"] or 1, self[pref.."g"] or 1, self[pref.."b"] or 1,self[pref.."alpha"] or 1)
+        else
+          love.graphics.setColor(self.r or 1, self.g or 1, self.b or 1,self.alpha or 1)
+       end
      end,
           
      Color= function(self,r,g,b,alpha,scale)
