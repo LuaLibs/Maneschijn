@@ -44,6 +44,7 @@ function kquad:onResize() self:initquar() end
 
 function kquad:Draw()
      self.frame=self.frame or 1
+     self:SetColor()
      QuadImage(self.imgtexture,self.quadtexture,self:TX(),self:TY(),self.frame)
 end
 
