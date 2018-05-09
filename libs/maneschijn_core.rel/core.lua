@@ -75,6 +75,10 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
      
      PerformDraw = function(self,prio)
          local pddebug=nil -- set to 0 if in use, set to false or nil if not!
+         local cdebug=false
+         if cdebug and prio~="RECURSE" then
+             print("\n\n"..string.char(27).."[31mNEW DRAW CYCLE"..string.char(27).."[0m")
+         end
          -- Not visible? Then get outta here!
          if self.Visible==false then return end
          -- init
@@ -88,10 +92,25 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
             priolist[uprio][#priolist[uprio]+1] = {self.Draw,self}
          end
          -- Recurse
+         --[[
+         if pddebug then
+            pddebug = pddebug + 5
+            love.graphics.print("KIDS of "..(self.dbgid or "idless "..self.kind),5,pddebug)
+            pddebug = pddebug + 20
+         end
+         --]]
+         if cdebug then
+            print(string.char(27).."[32mDEBUG>"..string.char(27).."[0m Processing kids of: "..(self.dbgid or "idless "..self.kind))
+         end            
          for _,kid in pairs(self.kids or childless) do
-             local tp = kid:PerformDraw('RECURSE')
-             for ip,lp in ipairs(tp or childless) do 
-                 for f in each(lp) do priolist[ip][#priolist[ip]+1]=f end 
+             if kid.Visible~=false then
+                if cdebug then
+                   print(string.char(27).."[32mDEBUG>"..string.char(27).."[0m Processing kid: "..(kid.dbgid or "idless "..kid.kind).."; from parent: "..(self.dbgid or "idless "..self.kind))
+                end            
+                local tp = kid:PerformDraw('RECURSE')
+                for ip,lp in ipairs(tp or childless) do 
+                    for f in each(lp) do priolist[ip][#priolist[ip]+1]=f end
+                end 
              end
          end          
          if prio=='RECURSE' then return priolist end -- When 'RECURSE' is set, we're just gathering 
@@ -218,8 +237,8 @@ function core.AttachMethods(gadget,meths,ignorekids)
        if not found then gadget.parent.kids[#gadget.parent.kids+1]=gadget end
     end 
     for _,kid in pairs(gadget.kids or childless) do
-        core.AttachMethods(kid,meths) 
         kid.parent=gadget
+        core.AttachMethods(kid,meths) 
     end
 end    
 
@@ -262,7 +281,20 @@ end
 core.AttachMethods(core.MainGadget)
 
 
-
+function core.Tree(pgadget,level) -- This is only for debugging purposes
+    local gadget = pgadget or core.MainGadget
+    local strings=string
+    local tabs=""
+    local l=level or 0
+    local ret=""
+    local ansi={[true]=strings.char(27).."[32m",[false]=strings.char(27).."[31m"}
+    for i=1,l do tabs=tabs.."\t" end ret=ret..tabs 
+    ret=ret..(gadget.kind or "MAIN GADGET").." "..(gadget.dbgid or "IDLESS")
+    for _,kid in pairs(gadget.kids or childless) do
+        ret=ret.."\n"..tabs..ansi[kid.parent==gadget]..kid.kind.." "..(kid.dbgid or "IDLESS")..string.char(27).."[0m\n"..core.Tree(kid,l+1).."\n\n"
+    end
+    return ret    
+end 
 
 
 
