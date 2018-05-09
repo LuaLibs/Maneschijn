@@ -33,7 +33,7 @@ local scd = {x='w',w='w',y='h',h='h'}
 local childless = {} -- must always be an empty table, but it savers performance for having to create and dispose a table for each Method attachment to a childless gadget
 local gadgettypes = {}
 local pures = {
-     absolute = function(gadget,t,d) return gadget[t] or 0 end,
+     absolute = function(gadget,t,d) return tonumber(gadget[t]) or 0 end,
      screenw  = function(gadget,t,d) local width, height = love.window.getDesktopDimensions(  )  return width *gadget[t] end,
      screenh  = function(gadget,t,d) local width, height = love.window.getDesktopDimensions(  )  return height*gadget[t] end,
      windoww  = function(gadget,t,d) local width, height = love.graphics.getDimensions( )        return width *gadget[t] end,
@@ -126,7 +126,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
      end,
      
      Stat = function(self,s)
-         return self:Pure(s,self["d"..scd[s]])
+         return tonumber(self:Pure(s,self["d"..scd[s]])) or 0
      end,
      
      TX = function(self) if self.superior then return 0 else return self.parent:TX()+self:Stat("x") end end,           
@@ -134,7 +134,9 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
      TW = function(self) return self:Stat("w") end,
      TH = function(self) return self:Stat("h") end,    
      
-     TrueCoords = function(self) return self:TX(),self:TY(),self:TW(),self:TH() end,
+     TrueCoords = function(self) 
+        return self:TX(),self:TY(),self:TW(),self:TH() 
+     end,
      
      Parents = function(self,donotincludeself) -- For use in for routines. Goes way back to all parents until there are none any more.
         local wg = self
