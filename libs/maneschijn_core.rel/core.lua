@@ -134,6 +134,8 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
      TW = function(self) return self:Stat("w") end,
      TH = function(self) return self:Stat("h") end,    
      
+     TrueCoords = function(self) return self:TX(),self:TY(),self:TW(),self:TH() end,
+     
      Parents = function(self,donotincludeself) -- For use in for routines. Goes way back to all parents until there are none any more.
         local wg = self
         local i=0
