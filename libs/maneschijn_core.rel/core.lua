@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 18.05.08
+        Version: 18.05.09
 ]]
 -- Some core code will appear here, once development has begun
 
@@ -90,7 +90,9 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
          -- Recurse
          for _,kid in pairs(self.kids or childless) do
              local tp = kid:PerformDraw('RECURSE')
-             for ip,lp in ipairs(tp) do for f in each(lp) do priolist[ip][#priolist[ip]+1]=f end end
+             for ip,lp in ipairs(tp or childless) do 
+                 for f in each(lp) do priolist[ip][#priolist[ip]+1]=f end 
+             end
          end          
          if prio=='RECURSE' then return priolist end -- When 'RECURSE' is set, we're just gathering 
          -- Show everything according to priority
