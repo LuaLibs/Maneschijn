@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 18.05.09
+        Version: 18.05.10
 ]]
 -- Some core code will appear here, once development has begun
 
@@ -43,6 +43,21 @@ local pures = {
 }
 
 local methoden = { -- This is a bunch of methods and subvariables ALL gadgets should have
+
+    irmeth = function(self,meth)
+       local i=0
+       local t={}
+       local function get(g)
+         if g.Disabled==true then return end
+         if g.meth then t[#t+1]=g.meth end
+         for _,kid in pairs(g.kids) do get(kid) end
+       end
+       get(self)
+       return function()
+            i=i+1
+            return t[i]
+       end     
+    end,
     
     free = function(self) -- VERY VERY important. Only release gadgets through the "free" method If you just put them to nil before releasing them you will get memory leaks do to a bug in Lua's garbage collector in 'cyclic references' in tables!
         assert(not self.cantkill , "You tried to kill a gadget you cannot kill");
