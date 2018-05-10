@@ -96,7 +96,7 @@ function lijst:Clear(brute)
        return
     end
     local n=#self.items
-    for i=1,n do self.items[i]=nil end
+    for i=1,n do self.items[i]=nil self.selections[i]=nil end
 end
 
 
