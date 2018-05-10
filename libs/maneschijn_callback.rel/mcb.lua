@@ -11,11 +11,12 @@
 
 -- $USE libs/maneschijn_core
 
-
+maan=maan or {}
+maan.maan.doubleclicktimer=.75
 
 local core = maneschijn_core
 local cb = { Desc='Callback'}
-
+local dbclickchk = 0
 
 cb.handlers={
    -- Left to love for the time being   
@@ -41,10 +42,27 @@ cb.handlers={
    end,
    
    directorydropped=function(dir) cb.handlers.my_accept(dir,'dir') end,
-   filedropped=function(file) cb.handlers.my_accept(file:getFilename(),'file') end
+   filedropped=function(file) cb.handlers.my_accept(file:getFilename(),'file') end,
    
    
+   -- Click Gadgets
+   mousepressed= function (x,y,b,t,c)
+      -- Original code, but we ain't gonna be using that -- if love.mousepressed then return love.mousepressed(x,y,b,t,c) end
+      local tm=love.timer.getTime()
+      if math.abs(tm-dbclickchk)<=maan.doubleclicktimer then 
+         --for m in core.MainGadget:irmeth('mousedoubleclick') do m(x,y,b,t,c) end
+         maan.doubleclicked=true
+         dbclickchk=tm
+      else
+         maan.doubleclicked=false
+      end
+      for g,m in core.MainGadget:irmeth('mousepressed') do m(g,x,y,b,t,c) end
+   end,
    
+   mousereleased=function (x,y,b,t,c)
+      --if love.mousereleased then return love.mousereleased(x,y,b,t,c) end
+      for g,m in core.MainGadget:irmeth('mousereleased') do m(g,x,y,b,t,c) end
+    end
    
 }
 
