@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 18.05.09
+        Version: 18.05.10
 ]]
 -- $USE libs/maneschijn_core
 -- $USE libs/qgfx
@@ -22,19 +22,28 @@ function lijst:InitFont(fnt,siz)
    self.fontfont = love.graphics.newFont( self.font )   
 end
 
+       
+
 function lijst:onCreate()
    self.items=self.items or {}
-   self.br=self.br or 40 /255
-   self.bg=self.bg or 40 /255
-   self.bb=self.bb or 40 /255
-   self.r =self. r or 200/255
-   self.g =self. g or 200/255
-   self.b =self. b or 200/255      
+   self.br  =self. br or 40 /255
+   self.bg  =self. bg or 40 /255
+   self.bb  =self. bb or 40 /255
+   self.r   =self.  r or 200/255
+   self.g   =self.  g or 200/255
+   self.b   =self.  b or 200/255      
+   self.sfr =self.sfr or 0  /255
+   self.sfg =self.sfg or 100/255
+   self.sfb =self.sfb or 180/255      
+   self.sbr =self.sbr or 180/255
+   self.sbg =self.sbg or 100/255
+   self.sbb =self.sbb or   0/255      
    self.balpha = self.balpha or .75
    self:InitFont(self.font,self.fontsize)
    self.ident = self.ident or ({[true]=self.fontsize or 20,[false]=2})[self.allowicons]
    self.py=self.py or 0
    self.selected=self.selected or {}
+   self.selections=self.self.selections or {} -- Only used in multi select   
 end   
 
 function lijst:Draw()
