@@ -204,16 +204,18 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
      end,
           
      Color= function(self,r,g,b,alpha,scale)
-         self.r=(r or 255)/(scale or 1)
-         self.g=(g or 255)/(scale or 1)
-         self.b=(b or 255)/(scale or 1)
+         self.r=(r or scale)/(scale or 1)
+         self.g=(g or scale)/(scale or 1)
+         self.b=(b or scale)/(scale or 1)
          self.alpha=(alpha or scale)/(scale or 1)
      end,
      
      HexColor=function(self,hex)
         assert(#hex==6,"Invalid color code")
         self:color(tonumber("0x"..mid(hex,1,2)),tonumber("0x"..mid(hex,3,2)),tonumber("0x"..mid(hex,5,2)),255,255)
-     end   
+     end,
+     
+        
                           
 }
 
