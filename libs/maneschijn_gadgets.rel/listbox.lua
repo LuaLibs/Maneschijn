@@ -117,8 +117,13 @@ function lijst:mousepressed(x,y,b)
      end   
      local sel=self.selection
      if self.multiselect then sel=self.selections end
-     self:PerformSelect(sel)
-     if maan.doubleclicked then self:PerformAction(sel) end   
+     self:PerformSelect(sel,kz)
+     if maan.doubleclicked then self:PerformAction(sel,kz) end   
+end
+
+function lijst:ItemText(index)
+    assert(self.items[index],"listbox:ItemText >> There is no item on index #"..sval(index))
+    return self.items[index].text
 end
 
 --[[
