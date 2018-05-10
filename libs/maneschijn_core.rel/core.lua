@@ -49,13 +49,14 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
        local t={}
        local function get(g)
          if g.Disabled==true then return end
-         if g.meth then t[#t+1]=g.meth end
+         if g.meth then t[#t+1]={g,g.meth} end
          for _,kid in pairs(g.kids) do get(kid) end
        end
        get(self)
        return function()
             i=i+1
-            return t[i]
+            if not t[i] then return nil end
+            return t[i][2],t[i][1]
        end     
     end,
     
