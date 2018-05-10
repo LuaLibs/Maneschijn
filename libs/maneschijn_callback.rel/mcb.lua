@@ -12,7 +12,7 @@
 -- $USE libs/maneschijn_core
 
 maan=maan or {}
-maan.doubleclicktimer=.75
+maan.doubleclicktimer=1.75
 
 local core = maneschijn_core
 local cb = { Desc='Callback'}
@@ -49,14 +49,16 @@ cb.handlers={
    mousepressed= function (x,y,b,t,c)
       -- Original code, but we ain't gonna be using that -- if love.mousepressed then return love.mousepressed(x,y,b,t,c) end
       local tm=love.timer.getTime()
-      if math.abs(tm-dbclickchk)<=maan.doubleclicktimer then 
+      local verschil=math.abs(tm-dbclickchk)
+      local och=dbclickchk
+      if verschil<=maan.doubleclicktimer then 
          --for m in core.MainGadget:irmeth('mousedoubleclick') do m(x,y,b,t,c) end
-         maan.doubleclicked=true
-         dbclickchk=tm
+         maan.doubleclicked=true         
       else
          maan.doubleclicked=false
       end
-      print("mousepress callback")
+      dbclickchk=tm
+      print("mousepress callback   (double="..sval(maan.doubleclicked).." << "..tm.."-"..och.."="..verschil..")")
       for m,g in core.MainGadget:irmeth('mousepressed') do
           print("Go for mousepress in: "..(g.dbgid or "something")) 
           m(g,x,y,b,t,c) 

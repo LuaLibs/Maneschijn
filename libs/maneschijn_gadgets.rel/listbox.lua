@@ -118,6 +118,7 @@ function lijst:mousepressed(x,y,b)
      local sel=self.selection
      if self.multiselect then sel=self.selections end
      self:PerformSelect(sel,kz)
+     --print(serialize('maan',maan))
      if maan.doubleclicked then self:PerformAction(sel,kz) end   
 end
 

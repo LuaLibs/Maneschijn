@@ -216,17 +216,21 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
         self:color(tonumber("0x"..mid(hex,1,2)),tonumber("0x"..mid(hex,3,2)),tonumber("0x"..mid(hex,5,2)),255,255)
      end,
      
-     PerformAction=function(self,data,data2)
-              if self.id and maan[self.id] and maan[self.id.."_Action"] then 
-                 maan[self.id.."Action"](self,data)
+     PerformAction=function(self,data,data2)              
+              if self.id  and maan[self.id.."_Action"] then 
+                 maan[self.id.."_Action"](self,data,data2)
+              elseif self.id  and maan[self.id.."_action"] then 
+                 maan[self.id.."_action"](self,data,data2)
               elseif self.Action then
                  self:Action(data,data2)
               end 
      end,
 
      PerformSelect=function(self,data,data2)
-              if self.id and maan[self.id] and maan[self.id.."_Select"] then 
-                 maan[self.id.."Select"](self,data)
+              if self.id and maan[self.id.."_Select"] then 
+                 maan[self.id.."_Select"](self,data,data2)
+              elseif self.id and maan[self.id.."_select"] then 
+                 maan[self.id.."_select"](self,data,data2)
               elseif self.Select then
                  self:Select(data,data2)
               end 
