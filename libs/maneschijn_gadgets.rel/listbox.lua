@@ -26,7 +26,8 @@ end
        
 
 function lijst:onCreate()
-   self.items=self.items or {}
+   -- lots to do 
+   self.items=self.items or {} 
    self.br  =self. br or 40 /255
    self.bg  =self. bg or 40 /255
    self.bb  =self. bb or 40 /255
