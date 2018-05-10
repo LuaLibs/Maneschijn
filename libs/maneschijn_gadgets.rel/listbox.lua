@@ -33,12 +33,12 @@ function lijst:onCreate()
    self.r   =self.  r or 200/255
    self.g   =self.  g or 200/255
    self.b   =self.  b or 200/255      
-   self.sfr =self.sfr or 0  /255
-   self.sfg =self.sfg or 100/255
-   self.sfb =self.sfb or 180/255      
-   self.sbr =self.sbr or 180/255
+   self.sbr =self.sbr or 0  /255
    self.sbg =self.sbg or 100/255
-   self.sbb =self.sbb or   0/255      
+   self.sbb =self.sbb or 180/255      
+   self.sfr =self.sfr or 180/255
+   self.sfg =self.sfg or 100/255
+   self.sfb =self.sfb or   0/255      
    self.balpha = self.balpha or .75
    self:InitFont(self.font,self.fontsize)
    self.ident = self.ident or ({[true]=self.fontsize or 20,[false]=2})[self.allowicons]
