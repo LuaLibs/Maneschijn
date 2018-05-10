@@ -56,12 +56,16 @@ cb.handlers={
       else
          maan.doubleclicked=false
       end
-      for g,m in core.MainGadget:irmeth('mousepressed') do m(g,x,y,b,t,c) end
+      print("mousepress callback")
+      for m,g in core.MainGadget:irmeth('mousepressed') do
+          print("Go for mousepress in: "..(g.dbgid or "something")) 
+          m(g,x,y,b,t,c) 
+      end
    end,
    
    mousereleased=function (x,y,b,t,c)
       --if love.mousereleased then return love.mousereleased(x,y,b,t,c) end
-      for g,m in core.MainGadget:irmeth('mousereleased') do m(g,x,y,b,t,c) end
+      for m,g in core.MainGadget:irmeth('mousereleased') do m(g,x,y,b,t,c) end
     end
    
 }

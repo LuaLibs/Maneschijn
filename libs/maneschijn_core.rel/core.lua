@@ -49,14 +49,14 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
        local t={}
        local function get(g)
          if g.Enabled==false then return end
-         if g[meth] then t[#t+1]={g,g.meth} end
+         if g[meth] then t[#t+1]={g,g[meth]} end
          for _,kid in pairs(g.kids or childless) do get(kid) end
        end
        get(self)
-       print("Iterate "..#t.." "..sval(meth).." callbacks")
+       --print("Iterate "..#t.." "..sval(meth).." callbacks")
        return function()
             i=i+1
-            if i>#t then return nil end
+            if i>#t then return nil,nil end
             return t[i][2],t[i][1]
        end     
     end,
@@ -219,7 +219,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
      PerformAction=function(self,data)
               if self.id and maan[self.id] and maan[self.id.."_Action"] then 
                  maan[self.id.."Action"](self,data)
-              elseif self.TimerAction then
+              elseif self.Action then
                  self:Action(data)
               end 
      end,
@@ -227,7 +227,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
      PerformSelect=function(self,data)
               if self.id and maan[self.id] and maan[self.id.."_Select"] then 
                  maan[self.id.."Select"](self,data)
-              elseif self.TimerSelect then
+              elseif self.Select then
                  self:Select(data)
               end 
      end   
