@@ -76,8 +76,8 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
         if self.Timer and self.Timer>0 then
            self.TimerValue = (self.TimerValue or 0) + dt
            if self.TimerValue>self.Timer then 
-              if self.id and maan[self.id] and maan[self.id].TimerAction then 
-                 maan[self.id].TimerAction(self)
+              if self.id and maan[self.id] and maan[self.id.."_TimerAction"] then 
+                 maan[self.id.."TimerAction"](self)
               elseif self.TimerAction then
                  self:TimerAction()
               end
@@ -102,8 +102,8 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
          for i=1,core.maxpriority do priolist[i]={} end      
          local uprio = math.ceil(self.priority or core.maxpriority/2)
          -- Add stuff into the right priority list         
-         if self.id and maan[self.id] and maan[self.id].Draw then 
-            priolist[uprio][#priolist[uprio]+1] = {maan[self.id].Draw,self}
+         if self.id and maan[self.id] and maan[self.id.."Draw"] then 
+            priolist[uprio][#priolist[uprio]+1] = {maan[self.id.."Draw"],self}
          elseif self.Draw then
             priolist[uprio][#priolist[uprio]+1] = {self.Draw,self}
          end
@@ -215,7 +215,21 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
         self:color(tonumber("0x"..mid(hex,1,2)),tonumber("0x"..mid(hex,3,2)),tonumber("0x"..mid(hex,5,2)),255,255)
      end,
      
-        
+     PerformAction=function(self,data)
+              if self.id and maan[self.id] and maan[self.id.."_Action"] then 
+                 maan[self.id.."Action"](self,data)
+              elseif self.TimerAction then
+                 self:Action(data)
+              end 
+     end,
+
+     PerformSelect=function(self,data)
+              if self.id and maan[self.id] and maan[self.id.."_Select"] then 
+                 maan[self.id.."Select"](self,data)
+              elseif self.TimerSelect then
+                 self:Select(data)
+              end 
+     end   
                           
 }
 
