@@ -72,6 +72,12 @@ cb.handlers={
    
 }
 
+local function autoset(gadget,fname,field)
+     if gadget['auto'..fname] then gadget[field]=gadget['auto'..fname]() end
+     if gadget.kids then 
+        for _,kid in pairs(gadget.kids) do autoset(kid,fname,field) end 
+     end
+end     
 
 function love.run()
       local edebug,xedebug = false,true
@@ -108,6 +114,10 @@ function love.run()
                -- Please note the call to love for non-existent handlers is only a temporary measure to prevent bugs and crashes, but is deprecated from the start!
            end
         end
+      
+      -- autoenable/visibility
+      autoset(core.MainGadget,'enable','Enabled')
+      autoset(core.MainGadget,'visible','Visible')
         
       -- Update timer value  
       dt = love.timer.step()
@@ -123,6 +133,7 @@ function love.run()
          love.graphics.present()
       end
       
+          
 
       
       -- The 'rest' routine
