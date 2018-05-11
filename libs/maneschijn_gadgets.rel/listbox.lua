@@ -54,7 +54,18 @@ function lijst:Selected(kz)
      else
         return kz==self.selection
      end
-end     
+end
+
+function lijst:selecteditems()
+     if not self.multiselect then
+        if kz then return {kz} end
+        return {}
+     end
+     local ret = {}
+     for i,p in pairs(self.selections) do if p then ret[#ret+1]=i end end
+     return ret
+end         
+             
 
 function lijst:Draw()
    self:SetColor('b')

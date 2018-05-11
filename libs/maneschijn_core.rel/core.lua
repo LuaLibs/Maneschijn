@@ -29,6 +29,7 @@ local core = {
 local sct = {'x','y','w','h'}
 local scd = {x='w',w='w',y='h',h='h'}
 
+core.deffont = love.graphics.getFont( ) -- Of course, this only works if the core is loaded before any font changes take place, or the new font will be seen as 'default'.
 
 local childless = {} -- must always be an empty table, but it savers performance for having to create and dispose a table for each Method attachment to a childless gadget
 local gadgettypes = {}
@@ -236,6 +237,28 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
               elseif self.Select then
                  self:Select(data,data2)
               end 
+     end,
+     
+     SetFont=function(self,font)
+         local lfont
+         if font==nil then
+            lfont=self.font
+         elseif font==true then
+            lfont=self.font
+            self.loadedfont=nil
+         elseif font==false then
+            self.loadedfont=false   
+         elseif type(font)=='string' then
+            self.loadedfont=nil
+            self.font=font
+         else
+            error("GADGET:SetFont("..sval(font).."): Invalid parameter")               
+         end   
+         if lfont then
+            self.loadedfont=self.loadedfont or love.graphics.newFont(lfont,self.fontheight or 20)
+         end
+         self.loadedfont = self.loadedfont or core.deffont
+         love.graphics.setFont(self.loadedfont)                          
      end                            
 }
 
