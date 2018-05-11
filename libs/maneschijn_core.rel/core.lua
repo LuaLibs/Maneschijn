@@ -200,9 +200,9 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
         local dv=1
         if self:Disabled() then dv=3 end
         if type(pref)=="string" then
-           love.graphics.setColor((self[pref.."r"] or 1)/3, (self[pref.."g"] or 1)/3, (self[pref.."b"] or 1)/3,(self[pref.."alpha"] or 1)/3)
+           love.graphics.setColor((self[pref.."r"] or 1)/dv, (self[pref.."g"] or 1)/dv, (self[pref.."b"] or 1)/dv,(self[pref.."alpha"] or 1)/dv)
         else
-          love.graphics.setColor((self.r or 1)/3, (self.g or 1)/3, (self.b or 1)/3,(self.alpha or 1)/3)
+          love.graphics.setColor((self.r or 1)/dv, (self.g or 1)/dv, (self.b or 1)/dv,(self.alpha or 1)/dv)
        end
      end,
           
