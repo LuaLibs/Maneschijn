@@ -127,6 +127,10 @@ function lijst:ItemText(index)
     return self.items[index].text
 end
 
+function lijst:Items()
+    return #self.items
+end    
+
 --[[
 function lijst:yupdate()
    for i,d in ipairs(self.items) do
