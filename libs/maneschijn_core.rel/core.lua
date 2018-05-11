@@ -236,8 +236,7 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
               elseif self.Select then
                  self:Select(data,data2)
               end 
-     end   
-                          
+     end                            
 }
 
 local superior_methods = {  Draw=nothing }
