@@ -56,7 +56,7 @@ function knopje:onCreate()
        if self.buttontype=='ok' then dcol='blue' pcol='green' elseif self.buttontype=='cancel' then dcol='red' pcol='brown' end
        local dbc = self.dbutton or dcol
        local pbc = self.pbutton or pcol
-       self.tbutton={texture='libs/maneschijn_defaultgraphics.rel/buttons/'..dbc..".png",texture='libs/maneschijn_defaultgraphics.rel/buttons/'..pbc..".png",stretch=true}
+       self.tbutton={texture='libs/maneschijn_defaultgraphics.rel/buttons/'..dbc..".png",ptexture='libs/maneschijn_defaultgraphics.rel/buttons/'..pbc..".png",stretch=true}
     end
     self.tbutton.butimage = self.tbutton.butimage or KnopLoadImage(self.tbutton.texture)
     local iw,ih=ImageSizes(self.tbutton.butimage)
