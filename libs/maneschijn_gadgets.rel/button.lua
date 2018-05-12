@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 18.05.11
+        Version: 18.05.12
 ]]
 
 -- $USE libs/maneschijn_core
@@ -19,8 +19,18 @@ local function dp(a)
    if debug then print(a) end
 end   
 
+local knoptexes = {}
 
 local knopje={}
+
+-- Saves RAM. Why having the same button textures all over the place, eh?
+-- Also saves loading time. A texture tha thas been loaded doesn't have to be loaded again, right?
+local function KnopLoadImage(pimg)
+    local img = pimg:upper()
+    knoptexes[img] = knoptexes[img] or LoadImage(img)
+    return knoptexes[img]
+end    
+    
 
 function knopje:SetCaption(caption)
     self.caption=caption or self.caption or ""
@@ -42,11 +52,13 @@ function knopje:onCreate()
     else   
        assert(maneschijn_defaultgraphics,"The usage of the 'dbutton' field requires the maneschijn_defaultgraphics library to be loaded.\nWithout it you are solely dependent on the cbutton settings!")
        local dcol='grey'
-       if self.buttontype=='ok' then dcol='blue' elseif self.buttontype=='cancel' then dcol='red' end
+       local pcol='yellow'
+       if self.buttontype=='ok' then dcol='blue' pcol='green' elseif self.buttontype=='cancel' then dcol='red' pcol='brown' end
        local dbc = self.dbutton or dcol
-       self.tbutton={texture='libs/maneschijn_defaultgraphics.rel/buttons/'..dbc..".png",stretch=true}
+       local pbc = self.pbutton or pcol
+       self.tbutton={texture='libs/maneschijn_defaultgraphics.rel/buttons/'..dbc..".png",texture='libs/maneschijn_defaultgraphics.rel/buttons/'..pbc..".png",stretch=true}
     end
-    self.tbutton.butimage = self.tbutton.butimage or LoadImage(self.tbutton.texture)
+    self.tbutton.butimage = self.tbutton.butimage or KnopLoadImage(self.tbutton.texture)
     local iw,ih=ImageSizes(self.tbutton.butimage)
     local gw,gh=self:Stat("w",'dw'),self:Stat('h','dh')
     if self.tbutton.stretch then
