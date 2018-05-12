@@ -127,6 +127,10 @@ function lijst:mousepressed(x,y,b)
         self.selection=nil
      end   
      local sel=self.selection
+     if kz>#self.items then 
+        cleartable(self.selections)
+        kz=nil
+     end   
      if self.multiselect then sel=self.selections end
      self:PerformSelect(sel,kz)
      --print(serialize('maan',maan))
