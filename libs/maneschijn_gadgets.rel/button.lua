@@ -58,8 +58,12 @@ function knopje:onCreate()
        local pbc = self.pbutton or pcol
        self.tbutton={texture='libs/maneschijn_defaultgraphics.rel/buttons/'..dbc..".png",ptexture='libs/maneschijn_defaultgraphics.rel/buttons/'..pbc..".png",stretch=true}
     end
-    self.tbutton.butimage = self.tbutton.butimage or KnopLoadImage(self.tbutton.texture)
-    local iw,ih=ImageSizes(self.tbutton.butimage)
+    assert(self.tbutton. texture,"No texture set")
+    assert(self.tbutton.ptexture,"No ptexture set")
+    self.tbutton.butimage = self.tbutton.butimage or {}
+    self.tbutton.butimage[false] = self.tbutton.butimage[false] or KnopLoadImage(self.tbutton. texture)
+    self.tbutton.butimage[true ] = self.tbutton.butimage[true ] or KnopLoadImage(self.tbutton.ptexture)
+    local iw,ih=ImageSizes(self.tbutton.butimage[false])
     local gw,gh=self:Stat("w",'dw'),self:Stat('h','dh')
     if self.tbutton.stretch then
        self.tbutton.sw,self.tbutton.sh=gw/iw,gh/ih
@@ -71,11 +75,31 @@ function knopje:onCreate()
     self.btb=self.btb or 1      
     self.frame=self.frame or 1
     self:SetCaption(self.caption)
+    self.pushed=false
 end
+
+function knopje:mousepressed(x,y,b)
+    if not b==1 then return end
+    local bx,by=self:TX(),self:TY()
+    local ex,ey=bx+self:TW(),by+self:TH()
+    self.pushed = x>bx and y>by and x<ex and y<ey
+    -- print("mouse:(",x,",",y,");","button:("..bx..","..by..")-("..ex..","..ey..");","pushed:",self.pushed)
+end
+
+function knopje:mousereleased(x,y,b)
+    if not b==1 then return end
+    if not self.pushed then return end
+    local bx,by=self:TX(),self:TY()
+    local ex,ey=bx+self:TW(),by+self:TH()
+    self.pushed=false
+    if x>bx and y>by and x<ex and y<ey then
+       self:PerformAction()
+    end
+end     
 
 function knopje:Draw()
     self:SetColor('bt')    
-    DrawImage(self.tbutton.butimage,self:TX(),self:TY(),self.frame,0,self.tbutton.sw,self.tbutton.sh)
+    DrawImage(self.tbutton.butimage[self.pushed],self:TX(),self:TY(),self.frame,0,self.tbutton.sw,self.tbutton.sh)
     self:SetColor()
     DrawImage(self.TextImg,self:TX()+(self:TW()/2),self:TY()+(self:TH()/2))
 end
