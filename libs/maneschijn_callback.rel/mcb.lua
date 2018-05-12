@@ -12,7 +12,7 @@
 -- $USE libs/maneschijn_core
 
 maan=maan or {}
-maan.doubleclicktimer=1.75
+maan.doubleclicktimer=0.75
 
 local core = maneschijn_core
 local cb = { Desc='Callback'}
