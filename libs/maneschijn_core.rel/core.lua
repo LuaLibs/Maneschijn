@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 18.05.12
+        Version: 18.05.14
 ]]
 -- Some core code will appear here, once development has begun
 
@@ -34,12 +34,19 @@ core.deffont = love.graphics.getFont( ) -- Of course, this only works if the cor
 local childless = {} -- must always be an empty table, but it savers performance for having to create and dispose a table for each Method attachment to a childless gadget
 local gadgettypes = {}
 local pures = {
-     absolute = function(gadget,t,d) return tonumber(gadget[t]) or 0 end,
-     screenw  = function(gadget,t,d) local width, height = love.window.getDesktopDimensions(  )  return width *gadget[t] end,
-     screenh  = function(gadget,t,d) local width, height = love.window.getDesktopDimensions(  )  return height*gadget[t] end,
-     windoww  = function(gadget,t,d) local width, height = love.graphics.getDimensions( )        return width *gadget[t] end,
-     windowh  = function(gadget,t,d) local width, height = love.graphics.getDimensions( )        return height*gadget[t] end,
-     parent   = function(gadget,t,d) return (gadget.parent or core.MainGadget):Stat(d)*gadget[t] end
+     absolute  = function(gadget,t,d) return tonumber(gadget[t]) or 0 end,
+     screenw   = function(gadget,t,d) local width, height = love.window.getDesktopDimensions(  )  return width *gadget[t] end,
+     screenh   = function(gadget,t,d) local width, height = love.window.getDesktopDimensions(  )  return height*gadget[t] end,
+     windoww   = function(gadget,t,d) local width, height = love.graphics.getDimensions( )        return width *gadget[t] end,
+     windowh   = function(gadget,t,d) local width, height = love.graphics.getDimensions( )        return height*gadget[t] end,
+     parent    = function(gadget,t,d) return (gadget.parent or core.MainGadget):Stat(d)*gadget[t] end,
+     parentend = function(gadget,t,d)                        
+                      local par = (gadget.parent or core.MainGadget)
+                      -- print(par.kind,'gives',par:Stat(d),"from",d)
+                      -- error("force error") -- debug
+                      local ret = par:Stat(d)-gadget[t]
+                      return ret 
+                 end
      
 }
 
@@ -163,7 +170,10 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
      end,
      
      Stat = function(self,s)
-         return tonumber(self:Pure(s,self["d"..scd[s]])) or 0
+         return tonumber(self:Pure(s,
+                 --self["d"..scd[s]]
+                 self['d'..s]
+                 )) or 0
      end,
      
      TX = function(self) if self.superior then return 0 else return self.parent:TX()+self:Stat("x") end end,           
@@ -226,6 +236,8 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
                  maan[self.id.."_action"](self,data,data2)
               elseif self.Action then
                  self:Action(data,data2)
+              elseif self.action then
+                 self:action(data,data2)
               end 
      end,
 
@@ -329,6 +341,11 @@ function core.StatCalc(gadget)
            elseif suffixed(vs,"%") then   
               r = (tonumber(left(vs,#vs-1)) or 0)/100
               gadget['d'..s]='parent'
+           elseif suffixed(vs,"-") then   
+              r = (tonumber(left(vs,#vs-1)) or 0)
+              gadget['d'..s]='parentend'
+              print ("debug",vs,r,gadget['d'..s],s)              
+              --error(gadget.kind.."/"..gadget.parent.kind)
            end
            gadget[s]=r
         else 
