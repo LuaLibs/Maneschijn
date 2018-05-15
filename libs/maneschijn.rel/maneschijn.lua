@@ -6,13 +6,14 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 18.05.11
+        Version: 18.05.15
 ]]
 
 -- Maneschijn libraries
 -- $USE libs/maneschijn_defaultgraphics
 -- $USE libs/maneschijn_gadgets
 -- $USE libs/maneschijn_callback
+-- $USE libs/maneschijn_filerequest
 -- General libraries that should always come with maneschijn
 -- $USE libs/notify
 
