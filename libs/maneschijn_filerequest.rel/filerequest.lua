@@ -6,9 +6,81 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 18.05.15
+        Version: 18.05.18
 ]]
-local gui = {}
 
 -- $USE libs/maneschijn_gadgets
+-- $USE libs/glob
+-- $USE libs/path
+-- $USE libs/jcrxenv
 
+local core=maneschijn_core
+local module = {}
+local gui 
+
+module.config = {
+    background = 'libs/maneschijn_filerequest/assets/dfback.png', -- This picture is terrible, but at least it's something you can use. :P
+    fieldbackcolor  = {0,0,.2},
+    fieldfrontcolor = {0,0,.8} 
+}
+local config = copytable(module.config,true) -- When the user messes it up, I always go this backup :P
+
+
+local function frq_init()
+  gui = {
+    id = "FILEREQUESTORSTUFF",
+    filerequestordoesnthidethisgadgetwhenrunning=true,
+    kind='quad',
+    x=0,y=0,w="100%",h="100%",
+    image = module.config.background or config.background,
+    parent=core.MainGadget,
+    kids={
+        volumes = {
+           x='2%',y='2%',w='15%',h='25%',kind='listbox',
+            r = (module.config.fieldfrontcolors or config.fieldfrontcolors)[1],
+            g = (module.config.fieldfrontcolors or config.fieldfrontcolors)[2],
+            b = (module.config.fieldfrontcolors or config.fieldfrontcolors)[3],
+           br = (module.config.fieldfrontcolors or config.fieldfrontcolors)[1],
+           bg = (module.config.fieldfrontcolors or config.fieldfrontcolors)[2],
+           bb = (module.config.fieldfrontcolors or config.fieldfrontcolors)[3],
+        }
+    }    
+  }
+CreateGadget(gui)  
+end
+local volumes=gui.kids.volumes
+
+local function frq_GetVolumes()
+    volumes:Clear()
+    -- $IF $WINDOWS
+    for i=1,26 do 
+        volumes:Add(string.char(64+i))
+    end
+    -- $FI
+    -- $IF $LINUX
+    volumes:Add("/")
+    -- $FI
+    -- $IF $MAC
+    volumes:Add("/")
+    for f in each(glob("/Volumes/*")) do
+        volumes:Add(StripDir(f))
+    end
+    -- $FI
+end        
+    
+
+function module.TrueRequest(ftype,caption,path,filter,save,unparsedflags)
+    if not gui then frq_init() end
+    local cpath = path or jcrxenv.get("FILEREQUESTORLASTPATH") or os.getenv("HOME")
+    frq_GetVolumes()
+end    
+
+
+function module.RequestFile(caption,dir,filter,save,flags)
+    return module.TrueRequest('file',caption,dir,filter,save,flags)
+end
+RequestFile=module.RequestFile
+
+
+
+return module
