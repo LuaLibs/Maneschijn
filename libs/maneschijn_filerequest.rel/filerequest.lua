@@ -100,11 +100,16 @@ end
              
    
 function module.TrueRequest(ftype,caption,path,filter,save,unparsedflags)
+    -- Init
     if not gui then frq_init() end
     local cpath = path or jcrxenv.get("FILEREQUESTORLASTPATH") or os.getenv("HOME"); assert(cpath,"No path to work with")
     local flags = frq_parseflags(unparsedflags)
     frq_GetVolumes()
     frq_favorites()
+    
+    -- Take over the flow. No matter what flow routine was active, this routine will take over until the file requesting is over
+    
+    -- Closure
     
 end    
 
