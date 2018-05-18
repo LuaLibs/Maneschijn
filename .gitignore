@@ -7,6 +7,10 @@
 MKL*
 *MKL*
 
+# Crap files Mac creates and which I can't turn off for some odd reason!
+._*
+.DS_Store
+
 # Compiled Lua sources
 luac.out
 
