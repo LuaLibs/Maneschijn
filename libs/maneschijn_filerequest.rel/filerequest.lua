@@ -13,11 +13,18 @@
 -- $USE libs/glob
 -- $USE libs/path
 -- $USE libs/jcrxenv
+-- $USE libs/nothing
 
 local core=maneschijn_core
 local module = {}
 local gui 
+local cb
 
+-- debug
+local xedebug
+local  edebug
+
+-- default config
 module.config = {
     background = 'libs/maneschijn_filerequest/assets/dfback.png', -- This picture is terrible, but at least it's something you can use. :P
     fieldbackcolor  = {0,0,.2},
@@ -107,8 +114,36 @@ function module.TrueRequest(ftype,caption,path,filter,save,unparsedflags)
     frq_GetVolumes()
     frq_favorites()
     
-    -- Take over the flow. No matter what flow routine was active, this routine will take over until the file requesting is over
+    -- Without this, go to hell!
+    assert(love.event and love.graphics,"Required LOVE modules NOT present")
     
+    -- Take over the flow. No matter what flow routine was active, this routine will take over until the file requesting is over
+    while true do
+        
+        love.graphics.clear()        
+        -- Process events.
+        if love.event then
+           love.event.pump()        
+           for name, a,b,c,d,e,f in love.event.poll() do
+               -- Quit process is the same
+               if name == "quit" then
+                  return nil
+                  --[[
+                  if not love.quit or not love.quit() then
+                     core.MainGadget.cantkill=false
+                     core.MainGadget:free()
+                     return a or 0
+                  end
+                  ]]
+               end
+               --love.handlers[name](a,b,c,d,e,f)
+               if edebug or (xedebug and (not cb.handlers[name])) then print("Event triggered: ",name,"\nParameters: ",a,b,c,d,e,f) end
+               (cb.handlers[name] or nothing)(a,b,c,d,e,f)
+               -- Please note the call to love for non-existent handlers is only a temporary measure to prevent bugs and crashes, but is deprecated from the start!
+           end
+        end
+       love.graphics.present()
+    end
     -- Closure
     
 end    
