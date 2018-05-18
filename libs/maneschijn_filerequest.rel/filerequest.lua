@@ -43,12 +43,22 @@ local function frq_init()
            br = (module.config.fieldfrontcolors or config.fieldfrontcolors)[1],
            bg = (module.config.fieldfrontcolors or config.fieldfrontcolors)[2],
            bb = (module.config.fieldfrontcolors or config.fieldfrontcolors)[3],
+        },
+        favorites = {
+           x='2%',y='30%',w='15%',h='58%',kind='listbox',
+            r = (module.config.fieldfrontcolors or config.fieldfrontcolors)[1],
+            g = (module.config.fieldfrontcolors or config.fieldfrontcolors)[2],
+            b = (module.config.fieldfrontcolors or config.fieldfrontcolors)[3],
+           br = (module.config.fieldfrontcolors or config.fieldfrontcolors)[1],
+           bg = (module.config.fieldfrontcolors or config.fieldfrontcolors)[2],
+           bb = (module.config.fieldfrontcolors or config.fieldfrontcolors)[3],
         }
     }    
   }
 CreateGadget(gui)  
 end
-local volumes=gui.kids.volumes
+local volumes   =gui.kids.volumes
+local favorites=gui.kids.favorites
 
 local function frq_GetVolumes()
     volumes:Clear()
@@ -68,7 +78,7 @@ local function frq_GetVolumes()
     -- $FI
 end        
 
-local function parseflags(flags)
+local function frq_parseflags(flags)
    local ret = {}   
    local work
    if     type(flags)=='string' then work=mysplit(flags,";")
@@ -79,14 +89,23 @@ local function parseflags(flags)
        else   error("I don't understand the flag setup!") end
    end    
    return ret
-end           
+end
+
+local function frq_favorites()
+    favorites:Clear()
+    for fav in each(jcrxenv.getmulti("FileRequest_Favorites") or {}) do
+        favorites:Add(fav)
+    end
+end                           
              
    
 function module.TrueRequest(ftype,caption,path,filter,save,unparsedflags)
     if not gui then frq_init() end
     local cpath = path or jcrxenv.get("FILEREQUESTORLASTPATH") or os.getenv("HOME"); assert(cpath,"No path to work with")
-    local flags = parseflags(unparsedflags)
+    local flags = frq_parseflags(unparsedflags)
     frq_GetVolumes()
+    frq_favorites()
+    
 end    
 
 
