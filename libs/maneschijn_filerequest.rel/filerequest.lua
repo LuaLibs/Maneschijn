@@ -67,11 +67,25 @@ local function frq_GetVolumes()
     end
     -- $FI
 end        
-    
 
+local function parseflags(flags)
+   local ret = {}   
+   local work
+   if     type(flags)=='string' then work=mysplit(flags,";")
+   else   work=flags end
+   for k,v in pairs(work) do
+       if     type(k)=='number' and type(v)=='string' then ret[v]=true
+       elseif type(k)=='string' and v==true           then ret[k]=true
+       else   error("I don't understand the flag setup!") end
+   end    
+   return ret
+end           
+             
+   
 function module.TrueRequest(ftype,caption,path,filter,save,unparsedflags)
     if not gui then frq_init() end
-    local cpath = path or jcrxenv.get("FILEREQUESTORLASTPATH") or os.getenv("HOME")
+    local cpath = path or jcrxenv.get("FILEREQUESTORLASTPATH") or os.getenv("HOME"); assert(cpath,"No path to work with")
+    local flags = parseflags(unparsedflags)
     frq_GetVolumes()
 end    
 
