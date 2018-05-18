@@ -104,11 +104,20 @@ local function frq_favorites()
         favorites:Add(fav)
     end
 end                           
+
+local function autoset(gadget,fname,field)
+     if gadget['auto'..fname] then gadget[field]=gadget['auto'..fname]() end
+     if gadget.kids then 
+        for _,kid in pairs(gadget.kids) do autoset(kid,fname,field) end 
+     end
+end     
              
    
+local dt
 function module.TrueRequest(ftype,caption,path,filter,save,unparsedflags)
     -- Init
     if not gui then frq_init() end
+    gui.Visible=true
     local cpath = path or jcrxenv.get("FILEREQUESTORLASTPATH") or os.getenv("HOME"); assert(cpath,"No path to work with")
     local flags = frq_parseflags(unparsedflags)
     frq_GetVolumes()
@@ -120,13 +129,14 @@ function module.TrueRequest(ftype,caption,path,filter,save,unparsedflags)
     -- Take over the flow. No matter what flow routine was active, this routine will take over until the file requesting is over
     while true do
         
-        love.graphics.clear()        
+        --love.graphics.clear()        
         -- Process events.
         if love.event then
            love.event.pump()        
            for name, a,b,c,d,e,f in love.event.poll() do
                -- Quit process is the same
                if name == "quit" then
+                  gui.Visible=false
                   return nil
                   --[[
                   if not love.quit or not love.quit() then
@@ -142,10 +152,27 @@ function module.TrueRequest(ftype,caption,path,filter,save,unparsedflags)
                -- Please note the call to love for non-existent handlers is only a temporary measure to prevent bugs and crashes, but is deprecated from the start!
            end
         end
+        -- autoenable/visibility
+        autoset(gui,'enable','Enabled')
+        autoset(gui,'visible','Visible')
+        
+        -- Update timer value  
+        dt = love.timer.step()
+      
+        -- Update all timer based gadgets
+        gui:UpdateTimer(dt)
+      
+        -- Draw
+        if love.graphics and love.graphics.isActive() then
+           love.graphics.origin()
+           love.graphics.clear(love.graphics.getBackgroundColor())
+           gui:PerformDraw()
+        end   
+        
        love.graphics.present()
     end
     -- Closure
-    
+    gui.Visible=false
 end    
 
 
