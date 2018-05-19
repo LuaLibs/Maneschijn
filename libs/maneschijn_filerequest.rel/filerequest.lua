@@ -27,8 +27,8 @@ local  edebug
 -- default config
 module.config = {
     background = 'Libs/maneschijn_filerequest.rel/assets/dfback.png', -- This picture is terrible, but at least it's something you can use. :P
-    fieldbackcolor  = {0,0,.02},
-    fieldfrontcolor = {0,0,.8} 
+    fieldbackcolor  = {0, 0,.002},
+    fieldfrontcolor = {0,.4,.8} 
 }
 local config = copytable(module.config,true) -- When the user messes it up, I always go this backup :P
 
@@ -48,18 +48,25 @@ local function frq_init()
             r = (module.config.fieldfrontcolor or config.fieldfrontcolor)[1],
             g = (module.config.fieldfrontcolor or config.fieldfrontcolor)[2],
             b = (module.config.fieldfrontcolor or config.fieldfrontcolor)[3],
-           br = (module.config.fieldfrontcolor or config.fieldfrontcolor)[1],
-           bg = (module.config.fieldfrontcolor or config.fieldfrontcolor)[2],
-           bb = (module.config.fieldfrontcolor or config.fieldfrontcolor)[3],
+           br = (module.config.fieldbackcolor or config.fieldbackcolor)[1],
+           bg = (module.config.fieldbackcolor or config.fieldbackcolor)[2],
+           bb = (module.config.fieldbackcolor or config.fieldbackcolor)[3],
         },
         favorites = {
            x='2%',y='30%',w='15%',h='58%',kind='listbox',
             r = (module.config.fieldfrontcolor or config.fieldfrontcolor)[1],
             g = (module.config.fieldfrontcolor or config.fieldfrontcolor)[2],
             b = (module.config.fieldfrontcolor or config.fieldfrontcolor)[3],
-           br = (module.config.fieldfrontcolor or config.fieldfrontcolor)[1],
-           bg = (module.config.fieldfrontcolor or config.fieldfrontcolor)[2],
-           bb = (module.config.fieldfrontcolor or config.fieldfrontcolor)[3],
+           br = (module.config.fieldbackcolor or config.fieldbackcolor)[1],
+           bg = (module.config.fieldbackcolor or config.fieldbackcolor)[2],
+           bb = (module.config.fieldbackcolor or config.fieldbackcolor)[3],
+        },
+        plusmin = {
+           x='2%',y='90%',w='15%',h='8%',kind='pivot',
+           kids = {
+              add = {kind='button',x=   0 ,y=0,w='49%',h='100%',caption="+"},
+              rem = {kind='button',x='51%',y=0,w='49%',h='100%',caption="-"}
+           }
         }
     }    
   }
