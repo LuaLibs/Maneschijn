@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 18.05.19
+        Version: 18.05.20
 ]]
 
 -- $USE libs/maneschijn_gadgets
@@ -18,7 +18,42 @@
 local core=maneschijn_core
 local module = {}
 local gui 
-local cb = { handlers = {}}
+local dbclickchk=love.timer.getTime() 
+local cb = { handlers = {
+   -- Resize
+   resize = function (w, h)
+      -- Automatically resize all required gadgets
+      core.MainGadget:ReCreate()
+      -- Call back features that may be need to be called
+      if maan.resize then return maan.resize(w, h) end      
+   end,
+   
+   mousepressed= function (x,y,b,t,c)
+      -- Original code, but we ain't gonna be using that -- if love.mousepressed then return love.mousepressed(x,y,b,t,c) end
+      local tm=love.timer.getTime() dbclickchk=dbclickchk or tm
+      local verschil=math.abs(tm-dbclickchk)
+      local och=dbclickchk
+      if verschil<=maan.doubleclicktimer then 
+         --for m in core.MainGadget:irmeth('mousedoubleclick') do m(x,y,b,t,c) end
+         maan.doubleclicked=true         
+      else
+         maan.doubleclicked=false
+      end
+      dbclickchk=tm
+      --print("mousepress callback   (double="..sval(maan.doubleclicked).." << "..tm.."-"..och.."="..verschil..")")
+      for m,g in gui:irmeth('mousepressed') do
+          --print("Go for mousepress in: "..(g.dbgid or "something")) 
+          m(g,x,y,b,t,c) 
+      end
+   end,
+   
+   mousereleased=function (x,y,b,t,c)
+      --if love.mousereleased then return love.mousereleased(x,y,b,t,c) end
+      for m,g in gui:irmeth('mousereleased') do m(g,x,y,b,t,c) end
+    end
+   
+
+}}
 
 -- debug
 local xedebug
@@ -32,7 +67,7 @@ module.config = {
 }
 local config = copytable(module.config,true) -- When the user messes it up, I always go this backup :P
 
-local volumes,favorites,files
+local volumes,favorites,files,cpath,csave
 
 local function frq_init()
   gui = {
@@ -76,7 +111,60 @@ local function frq_init()
            br = (module.config.fieldbackcolor or config.fieldbackcolor)[1],
            bg = (module.config.fieldbackcolor or config.fieldbackcolor)[2],
            bb = (module.config.fieldbackcolor or config.fieldbackcolor)[3],
+        },
+        buttons = {
+           x="82%", y=2, w="16%",h="100%", kind='pivot',
+           kids = {
+               ok={
+                  kind='button',
+                  x=0,y=0,w='100%',h="18",
+                  buttontype='ok',
+                  caption="Ok",
+                  action=function(self)
+                         end
+               },
+               cancel={
+                  kind='button',
+                  x=0,y=20,w='100%',h="18",
+                  buttontype='cancel',
+                  caption="Cancel",
+                  action=function(self)
+                         end
+               },
+               parent={
+                  kind='button',
+                  x=0,y=60,w='100%',h="18",
+                  caption="Parent",
+                  autoenable=function(self)
+                                local l
+                                
+                                -- $IF $WINDOWS
+                                   l = 3
+                                -- $FI
+                                
+                                -- $IF !$WINDOWS
+                                   l = 1
+                                -- $FI
+                                
+                                return #cpath~=l
+                             end,
+                  action=function(self)
+                         end
+               },
+               makedir = {
+                  kind='button',
+                  x=0,y=80,w='100%',h="18",
+                  caption="Createdir",
+                  autoenable=function(self)
+                                return csave
+                             end,
+                  action=function(self)
+                         end
+               },
+               
+           }
         }
+        
     }    
   }
   CreateGadget(gui)
@@ -129,18 +217,30 @@ local function autoset(gadget,fname,field)
      if gadget.kids then 
         for _,kid in pairs(gadget.kids) do autoset(kid,fname,field) end 
      end
+end
+
+local function frq_GetFiles(filter,hidden)
+    files:Clear()
+    local fls=cdglob(cpath,"*")
+    for f in each(fls) do
+        if f~="." and f~=".." and (hidden or (not prefixed(f,"."))) then
+           files:Add(f)
+        end
+    end                  
 end     
              
    
 local dt
 function module.TrueRequest(ftype,caption,path,filter,save,unparsedflags)
     -- Init
+    csave=save==true
     if not gui then frq_init() end
     gui.Visible=true
-    local cpath = path or jcrxenv.get("FILEREQUESTORLASTPATH") or os.getenv("HOME"); assert(cpath,"No path to work with")
+    cpath = path or jcrxenv.get("FILEREQUESTORLASTPATH") or os.getenv("HOME"); assert(cpath,"No path to work with")
     local flags = frq_parseflags(unparsedflags)
     frq_GetVolumes()
     frq_favorites()
+    frq_GetFiles((filter or {})[1],flags.hidden)
     
     -- Without this, go to hell!
     assert(love.event and love.graphics,"Required LOVE modules NOT present")
