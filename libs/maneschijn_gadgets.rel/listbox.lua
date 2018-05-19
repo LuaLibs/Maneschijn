@@ -42,7 +42,7 @@ function lijst:onCreate()
    self.sfb =self.sfb or   0/255      
    self.balpha = self.balpha or .75
    self:InitFont(self.font,self.fontsize)
-   self.ident = self.ident or ({[true]=self.fontsize or 20,[false]=2})[self.allowicons]
+   self.ident = self.ident or ({[true]=self.fontsize or 20,[false]=2})[self.allowicons==true]
    self.py=self.py or 0
    self.selected=self.selected or {}
    self.selections=self.selections or {} -- Only used in multi select   

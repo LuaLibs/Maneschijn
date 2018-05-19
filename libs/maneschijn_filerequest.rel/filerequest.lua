@@ -18,7 +18,7 @@
 local core=maneschijn_core
 local module = {}
 local gui 
-local cb = {}
+local cb = { handlers = {}}
 
 -- debug
 local xedebug
@@ -27,7 +27,7 @@ local  edebug
 -- default config
 module.config = {
     background = 'Libs/maneschijn_filerequest.rel/assets/dfback.png', -- This picture is terrible, but at least it's something you can use. :P
-    fieldbackcolor  = {0,0,.2},
+    fieldbackcolor  = {0,0,.02},
     fieldfrontcolor = {0,0,.8} 
 }
 local config = copytable(module.config,true) -- When the user messes it up, I always go this backup :P
