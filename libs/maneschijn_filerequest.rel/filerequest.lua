@@ -32,6 +32,7 @@ module.config = {
 }
 local config = copytable(module.config,true) -- When the user messes it up, I always go this backup :P
 
+local volumes,favorites
 
 local function frq_init()
   gui = {
@@ -39,33 +40,33 @@ local function frq_init()
     filerequestordoesnthidethisgadgetwhenrunning=true,
     kind='quad',
     x=0,y=0,w="100%",h="100%",
-    image = module.config.background or config.background,
-    parent=core.MainGadget,
+    texture = module.config.background or config.background,
+    parent  = core.MainGadget,
     kids={
         volumes = {
            x='2%',y='2%',w='15%',h='25%',kind='listbox',
-            r = (module.config.fieldfrontcolors or config.fieldfrontcolors)[1],
-            g = (module.config.fieldfrontcolors or config.fieldfrontcolors)[2],
-            b = (module.config.fieldfrontcolors or config.fieldfrontcolors)[3],
-           br = (module.config.fieldfrontcolors or config.fieldfrontcolors)[1],
-           bg = (module.config.fieldfrontcolors or config.fieldfrontcolors)[2],
-           bb = (module.config.fieldfrontcolors or config.fieldfrontcolors)[3],
+            r = (module.config.fieldfrontcolor or config.fieldfrontcolor)[1],
+            g = (module.config.fieldfrontcolor or config.fieldfrontcolor)[2],
+            b = (module.config.fieldfrontcolor or config.fieldfrontcolor)[3],
+           br = (module.config.fieldfrontcolor or config.fieldfrontcolor)[1],
+           bg = (module.config.fieldfrontcolor or config.fieldfrontcolor)[2],
+           bb = (module.config.fieldfrontcolor or config.fieldfrontcolor)[3],
         },
         favorites = {
            x='2%',y='30%',w='15%',h='58%',kind='listbox',
-            r = (module.config.fieldfrontcolors or config.fieldfrontcolors)[1],
-            g = (module.config.fieldfrontcolors or config.fieldfrontcolors)[2],
-            b = (module.config.fieldfrontcolors or config.fieldfrontcolors)[3],
-           br = (module.config.fieldfrontcolors or config.fieldfrontcolors)[1],
-           bg = (module.config.fieldfrontcolors or config.fieldfrontcolors)[2],
-           bb = (module.config.fieldfrontcolors or config.fieldfrontcolors)[3],
+            r = (module.config.fieldfrontcolor or config.fieldfrontcolor)[1],
+            g = (module.config.fieldfrontcolor or config.fieldfrontcolor)[2],
+            b = (module.config.fieldfrontcolor or config.fieldfrontcolor)[3],
+           br = (module.config.fieldfrontcolor or config.fieldfrontcolor)[1],
+           bg = (module.config.fieldfrontcolor or config.fieldfrontcolor)[2],
+           bb = (module.config.fieldfrontcolor or config.fieldfrontcolor)[3],
         }
     }    
   }
-CreateGadget(gui)  
+  CreateGadget(gui)
+  volumes   = gui.kids.volumes
+  favorites = gui.kids.favorites  
 end
-local volumes   =gui.kids.volumes
-local favorites=gui.kids.favorites
 
 local function frq_GetVolumes()
     volumes:Clear()
