@@ -18,7 +18,7 @@
 local core=maneschijn_core
 local module = {}
 local gui 
-local cb
+local cb = {}
 
 -- debug
 local xedebug
@@ -91,6 +91,7 @@ local function frq_parseflags(flags)
    local work
    if     type(flags)=='string' then work=mysplit(flags,";")
    else   work=flags end
+   if not work then return {} end
    for k,v in pairs(work) do
        if     type(k)=='number' and type(v)=='string' then ret[v]=true
        elseif type(k)=='string' and v==true           then ret[k]=true
