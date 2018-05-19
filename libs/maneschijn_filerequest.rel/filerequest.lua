@@ -26,7 +26,7 @@ local  edebug
 
 -- default config
 module.config = {
-    background = 'libs/maneschijn_filerequest/assets/dfback.png', -- This picture is terrible, but at least it's something you can use. :P
+    background = 'Libs/maneschijn_filerequest.rel/assets/dfback.png', -- This picture is terrible, but at least it's something you can use. :P
     fieldbackcolor  = {0,0,.2},
     fieldfrontcolor = {0,0,.8} 
 }
