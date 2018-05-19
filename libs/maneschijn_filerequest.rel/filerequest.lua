@@ -32,7 +32,7 @@ module.config = {
 }
 local config = copytable(module.config,true) -- When the user messes it up, I always go this backup :P
 
-local volumes,favorites
+local volumes,favorites,files
 
 local function frq_init()
   gui = {
@@ -64,15 +64,25 @@ local function frq_init()
         plusmin = {
            x='2%',y='90%',w='15%',h='8%',kind='pivot',
            kids = {
-              add = {kind='button',x=   0 ,y=0,w='49%',h='100%',caption="+"},
-              rem = {kind='button',x='51%',y=0,w='49%',h='100%',caption="-"}
+              add = {kind='button',x=   0 ,y=0,w='49%',h='100%',caption="+", dbutton='green', pbutton='blue'},
+              rem = {kind='button',x='51%',y=0,w='49%',h='100%',caption="-", dbutton='red',   pbutton='brown'}
            }
+        },
+        files = {
+           x='20%', y=20,w='60%',h="60-",kind='listbox',
+            r = (module.config.fieldfrontcolor or config.fieldfrontcolor)[1],
+            g = (module.config.fieldfrontcolor or config.fieldfrontcolor)[2],
+            b = (module.config.fieldfrontcolor or config.fieldfrontcolor)[3],
+           br = (module.config.fieldbackcolor or config.fieldbackcolor)[1],
+           bg = (module.config.fieldbackcolor or config.fieldbackcolor)[2],
+           bb = (module.config.fieldbackcolor or config.fieldbackcolor)[3],
         }
     }    
   }
   CreateGadget(gui)
   volumes   = gui.kids.volumes
   favorites = gui.kids.favorites  
+  files     = gui.kids.files
 end
 
 local function frq_GetVolumes()
