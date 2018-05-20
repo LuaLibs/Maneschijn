@@ -165,6 +165,29 @@ local function frq_init()
                      end   
                   end,
                   action=function(self)
+                           if files.multiselect then
+                              assert(#files.selections>0,"Action should without files not be possible under these conditions")
+                              if (not flags.dirs) and #files.selection==1 and qff.IsDir(cpath.."/"..files.selections[1]) then
+                                 cpath=cpath.."/"..cpath.."/"..files.selections[1]
+                                 n.gfiles((filter or {})[1],flags.hidden)
+                                 return
+                              end                             
+                              chosen = {}
+                              for a in each(files.selections) do
+                                  local ff = cpath.."/"..a
+                                  if (qff.IsDir(ff) and flags.dirs) or (qff.IsFile(ff and (not flags.dirs))) then chosen[#chosen+1]=ff end
+                              end                              
+                           else
+                              local i = files.selection
+                              assert(i~=nil and i<=files:Items() and i>0,"Action should without a selection not be possible under these conditions")
+                              local r = cpath.."/"..files:ItemText(i)
+                              if qff.IsDir(r) and not flags.dirs then 
+                                 cpath=r
+                                 n.gfiles((filter or {})[1],flags.hidden)
+                                 return 
+                              end
+                              chosen = r
+                           end      
                          end
                },
                cancel={
