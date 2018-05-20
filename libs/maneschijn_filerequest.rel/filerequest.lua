@@ -14,6 +14,7 @@
 -- $USE libs/path
 -- $USE libs/jcrxenv
 -- $USE libs/nothing
+-- $USE libs/qff
 
 local core=maneschijn_core
 local module = {}
@@ -61,13 +62,14 @@ local  edebug
 
 -- default config
 module.config = {
-    background = 'Libs/maneschijn_filerequest.rel/assets/dfback.png', -- This picture is terrible, but at least it's something you can use. :P
+    background      = 'Libs/maneschijn_filerequest.rel/assets/dfback.png', -- This picture is terrible, but at least it's something you can use. :P
+    icon_directory  = 'Libs/maneschijn_filerequest.rel/assets/directory.png',
     fieldbackcolor  = {0, 0,.002},
     fieldfrontcolor = {0,.4,.8} 
 }
 local config = copytable(module.config,true) -- When the user messes it up, I always go this backup :P
 
-local volumes,favorites,files,cpath,csave
+local volumes,favorites,files,cpath,csave,diricon
 
 local function frq_init()
   gui = {
@@ -104,7 +106,7 @@ local function frq_init()
            }
         },
         files = {
-           x='20%', y=20,w='60%',h="60-",kind='listbox',
+           x='20%', y=20,w='60%',h="60-",kind='listbox',allowicons=true,
             r = (module.config.fieldfrontcolor or config.fieldfrontcolor)[1],
             g = (module.config.fieldfrontcolor or config.fieldfrontcolor)[2],
             b = (module.config.fieldfrontcolor or config.fieldfrontcolor)[3],
@@ -221,18 +223,38 @@ end
 
 local function frq_GetFiles(filter,hidden)
     files:Clear()
+    if cpath=="~" then cpath=os.getenv("HOME") end
     local fls=cdglob(cpath,"*")
+    local adds = {}
     for f in each(fls) do
         if f~="." and f~=".." and (hidden or (not prefixed(f,"."))) then
-           files:Add(f)
+           --[[        
+           if qff.isdir(cpath.."/"..f) then
+              files:Add(f,diricon)
+           else   
+              files:Add(f)
+           end 
+           ]]
+           local t=qff.filetype(cpath.."/"..f)
+           local ic={directory=diricon}
+           print(t,cpath.."/"..f)
+           adds[t]=adds[t] or {}  
+           adds[t][#adds[t]+1] = {f,ic[t]}
         end
-    end                  
+    end
+    print(serialize('adds',adds))                  
+    for t,add in spairs(adds) do
+        for a in each(add) do
+            files:Add(a[1],a[2])
+        end    
+    end    
 end     
              
    
 local dt
 function module.TrueRequest(ftype,caption,path,filter,save,unparsedflags)
     -- Init
+    diricon = diricon or LoadImage(module.config.icon_directory or config.icon_directory)
     csave=save==true
     if not gui then frq_init() end
     gui.Visible=true
