@@ -164,6 +164,7 @@ local function frq_init()
                   buttontype='cancel',
                   caption="Cancel",
                   action=function(self)
+                           cancelled=true
                          end
                },
                parent={
