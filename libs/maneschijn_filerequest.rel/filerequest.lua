@@ -72,7 +72,7 @@ module.config = {
 }
 local config = copytable(module.config,true) -- When the user messes it up, I always go this backup :P
 
-local volumes,favorites,files,cpath,csave,diricon,filter,flags
+local volumes,favorites,files,cpath,csave,diricon,filter,flags,cancelled,chosen
 
 local function frq_init()
   gui = {
@@ -302,6 +302,8 @@ end     ; n.gfiles=frq_GetFiles
 local dt
 function module.TrueRequest(ftype,caption,path,pfilter,save,unparsedflags)
     -- Init
+    cancelled = false
+    chosen = nil
     diricon = diricon or LoadImage(module.config.icon_directory or config.icon_directory)
     csave=save==true
     if not gui then frq_init() end
@@ -317,7 +319,7 @@ function module.TrueRequest(ftype,caption,path,pfilter,save,unparsedflags)
     assert(love.event and love.graphics,"Required LOVE modules NOT present")
     
     -- Take over the flow. No matter what flow routine was active, this routine will take over until the file requesting is over
-    while true do
+    while not (cancelled or chosen) do
         
         --love.graphics.clear()        
         -- Process events.
@@ -363,11 +365,17 @@ function module.TrueRequest(ftype,caption,path,pfilter,save,unparsedflags)
         end   
         
        love.graphics.present()
+       
+       
     end
     -- Closure
     gui.Visible=false
+    return chosen
 end    
 
+function module.GUIRESET()
+   if gui then  gui:Free() gui=nil end
+end   
 
 function module.RequestFile(caption,dir,filter,save,flags)
     return module.TrueRequest('file',caption,dir,filter,save,flags)
