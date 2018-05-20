@@ -117,6 +117,13 @@ local function frq_init()
            br = (module.config.fieldbackcolor or config.fieldbackcolor)[1],
            bg = (module.config.fieldbackcolor or config.fieldbackcolor)[2],
            bb = (module.config.fieldbackcolor or config.fieldbackcolor)[3],
+           autostripdir=true,
+           action = function(self)
+               local vi = self.selection
+               local vs; if vi and vi<=self:Items() then vs=self:ItemText(vi) else return end
+               cpath = vs
+               n.gfiles((filter or {})[1],flags.hidden)
+           end
         },
         plusmin = {
            x='2%',y='90%',w='15%',h='8%',kind='pivot',
