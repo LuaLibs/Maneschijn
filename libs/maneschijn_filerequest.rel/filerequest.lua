@@ -129,7 +129,7 @@ local function frq_init()
            x='2%',y='90%',w='15%',h='8%',kind='pivot',
            kids = {
               add = {kind='button',x=   0 ,y=0,w='49%',h='100%',caption="+", dbutton='green', pbutton='blue'},
-              rem = {kind='button',x='51%',y=0,w='49%',h='100%',caption="-", dbutton='red',   pbutton='brown'}
+              rem = {kind='button',x='51%',y=0,w='49%',h='100%',caption="-", dbutton='red',   pbutton='brown', autoenable=function(self) local i = favorites.selection return i~=nil and i>0 and i<=favorites:Items() end}
            }
         },
         currentdir = {
@@ -155,6 +155,15 @@ local function frq_init()
                   x=0,y=0,w='100%',h="18",
                   buttontype='ok',
                   caption="Ok",
+                  autoenable = function(self)
+                     if not files.multiselect then
+                        local i = files.selection
+                        --print(i)
+                        return i~=nil and i<=files:Items() and i>0
+                     else
+                        return #files.selections>0
+                     end   
+                  end,
                   action=function(self)
                          end
                },
