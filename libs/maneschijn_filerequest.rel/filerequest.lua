@@ -128,8 +128,30 @@ local function frq_init()
         plusmin = {
            x='2%',y='90%',w='15%',h='8%',kind='pivot',
            kids = {
-              add = {kind='button',x=   0 ,y=0,w='49%',h='100%',caption="+", dbutton='green', pbutton='blue'},
-              rem = {kind='button',x='51%',y=0,w='49%',h='100%',caption="-", dbutton='red',   pbutton='brown', autoenable=function(self) local i = favorites.selection return i~=nil and i>0 and i<=favorites:Items() end}
+              add = {kind='button',x=   0 ,y=0,w='49%',h='100%',caption="+", dbutton='green', pbutton='blue',
+              action = function(self)
+                  local favs=jcrxenv.getmulti("FileRequest_Favorites")
+                  table.sort(favs)
+                  for d in each(favs) do 
+                      if d==cpath then return end
+                  end
+                  favs[#favs+1]=cpath
+                  favorites:Add(cpath)
+                  jcrxenv.setmulti("FileRequest_Favorites",favs)                  
+              end},
+              rem = {kind='button',x='51%',y=0,w='49%',h='100%',caption="-", dbutton='red',   pbutton='brown', autoenable=function(self) local i = favorites.selection return i~=nil and i>0 and i<=favorites:Items() end,
+              action = function(self) 
+                 local favs=jcrxenv.getmulti("FileRequest_Favorites")
+                 table.sort(favs)
+                 local r = {}
+                 for d in each(favs) do
+                     if d~=favorites:ItemText(favorites.selection) then r[#r+1]=d end
+                 end
+                 favorites.selection=nil
+                 favorites:Clear()
+                 for d in each(r) do favorites:Add(d) end
+              end
+              }
            }
         },
         currentdir = {
@@ -337,7 +359,7 @@ local function frq_GetFiles(filter,hidden)
            adds[t][#adds[t]+1] = {f,ic[t]}
         end
     end
-    print(serialize('adds',adds))                  
+    -- print(serialize('adds',adds))                  
     for t,add in spairs(adds) do
         for a in each(add) do
             files:Add(a[1],a[2])
