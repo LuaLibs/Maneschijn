@@ -98,7 +98,12 @@ function lijst:Draw()
        end
        self:SetColor()
        if slctd then self:SetColor('sf') end 
-       love.graphics.print(self.items[i].text,x+self.ident,y+((i-1)*self.fontsize))
+       if self.autostripdir then
+          -- $USE libs/path
+          love.graphics.print(StripDir(self.items[i].text),x+self.ident,y+((i-1)*self.fontsize))
+       else
+          love.graphics.print(self.items[i].text,x+self.ident,y+((i-1)*self.fontsize))
+       end
    end end  
 end
 
