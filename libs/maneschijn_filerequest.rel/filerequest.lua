@@ -56,6 +56,8 @@ local cb = { handlers = {
 
 }}
 
+local n = {}
+
 -- debug
 local xedebug
 local  edebug
@@ -65,11 +67,12 @@ module.config = {
     background      = 'Libs/maneschijn_filerequest.rel/assets/dfback.png', -- This picture is terrible, but at least it's something you can use. :P
     icon_directory  = 'Libs/maneschijn_filerequest.rel/assets/directory.png',
     fieldbackcolor  = {0, 0,.002},
-    fieldfrontcolor = {0,.4,.8} 
+    fieldfrontcolor = {0,.4,.8} ,
+    labelcolor      = {0,0.705882,1}
 }
 local config = copytable(module.config,true) -- When the user messes it up, I always go this backup :P
 
-local volumes,favorites,files,cpath,csave,diricon
+local volumes,favorites,files,cpath,csave,diricon,filter,flags
 
 local function frq_init()
   gui = {
@@ -88,6 +91,23 @@ local function frq_init()
            br = (module.config.fieldbackcolor or config.fieldbackcolor)[1],
            bg = (module.config.fieldbackcolor or config.fieldbackcolor)[2],
            bb = (module.config.fieldbackcolor or config.fieldbackcolor)[3],
+           action = function(self)
+               local vi = self.selection
+               local vs; if vi and vi<=self:Items() then vs=self:ItemText(vi) else return end
+               -- $IF $LINUX
+               cpath = "/"
+               -- $FI
+               
+               -- $IF $MAC
+               if vs=="/" then cpath="/" else cpath="/Volumes/"..vs end
+               -- $FI
+               
+               -- $IF $WINDOWS
+               cpath = vs .."/"
+               -- $FI
+               
+               n.gfiles((filter or {})[1],flags.hidden)
+           end
         },
         favorites = {
            x='2%',y='30%',w='15%',h='58%',kind='listbox',
@@ -105,6 +125,12 @@ local function frq_init()
               rem = {kind='button',x='51%',y=0,w='49%',h='100%',caption="-", dbutton='red',   pbutton='brown'}
            }
         },
+        currentdir = {
+           x='20%',y=2,w='60%',h=18,kind='label',
+           r = (module.config.labelcolor or config.labelcolor)[1],
+           g = (module.config.labelcolor or config.labelcolor)[2],
+           b = (module.config.labelcolor or config.labelcolor)[3]
+        },
         files = {
            x='20%', y=20,w='60%',h="60-",kind='listbox',allowicons=true,
             r = (module.config.fieldfrontcolor or config.fieldfrontcolor)[1],
@@ -112,7 +138,7 @@ local function frq_init()
             b = (module.config.fieldfrontcolor or config.fieldfrontcolor)[3],
            br = (module.config.fieldbackcolor or config.fieldbackcolor)[1],
            bg = (module.config.fieldbackcolor or config.fieldbackcolor)[2],
-           bb = (module.config.fieldbackcolor or config.fieldbackcolor)[3],
+           bb = (module.config.fieldbackcolor or config.fieldbackcolor)[3]
         },
         buttons = {
            x="82%", y=2, w="16%",h="100%", kind='pivot',
@@ -138,7 +164,7 @@ local function frq_init()
                   x=0,y=60,w='100%',h="18",
                   caption="Parent",
                   autoenable=function(self)
-                                local l
+                                local l = 1
                                 
                                 -- $IF $WINDOWS
                                    l = 3
@@ -151,6 +177,21 @@ local function frq_init()
                                 return #cpath~=l
                              end,
                   action=function(self)
+                            cpath = replace(cpath,"\\","/")
+                            local s = mysplit(cpath,"/")
+                            local np = ""
+                            -- $IF $WINDOWS
+                            np = left(cpath,2) -- Windows drive letter
+                            -- $FI
+                            for i=1,#s-1 do
+                                np = np .. "/" .. s[i]
+                            end
+                            cpath=np    
+                            if cpath=="" then cpath="/" end
+                            -- $IF $WINDOWS
+                            if #cpath==2 then cpath=cpath.."/" end
+                            -- $FI
+                            n.gfiles((filter or {})[1],flags.hidden)
                          end
                },
                makedir = {
@@ -248,18 +289,19 @@ local function frq_GetFiles(filter,hidden)
             files:Add(a[1],a[2])
         end    
     end    
-end     
+end     ; n.gfiles=frq_GetFiles
              
    
 local dt
-function module.TrueRequest(ftype,caption,path,filter,save,unparsedflags)
+function module.TrueRequest(ftype,caption,path,pfilter,save,unparsedflags)
     -- Init
     diricon = diricon or LoadImage(module.config.icon_directory or config.icon_directory)
     csave=save==true
     if not gui then frq_init() end
     gui.Visible=true
     cpath = path or jcrxenv.get("FILEREQUESTORLASTPATH") or os.getenv("HOME"); assert(cpath,"No path to work with")
-    local flags = frq_parseflags(unparsedflags)
+    flags = frq_parseflags(unparsedflags)
+    filter = filter
     frq_GetVolumes()
     frq_favorites()
     frq_GetFiles((filter or {})[1],flags.hidden)
@@ -296,6 +338,9 @@ function module.TrueRequest(ftype,caption,path,filter,save,unparsedflags)
         -- autoenable/visibility
         autoset(gui,'enable','Enabled')
         autoset(gui,'visible','Visible')
+        
+        -- Dir always accurate
+        gui.kids.currentdir.caption=cpath
         
         -- Update timer value  
         dt = love.timer.step()

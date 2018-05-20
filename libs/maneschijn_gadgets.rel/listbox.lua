@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 18.05.19
+        Version: 18.05.20
 ]]
 -- $USE libs/maneschijn_core
 -- $USE libs/qgfx
@@ -58,6 +58,7 @@ end
 
 function lijst:selecteditems()
      if not self.multiselect then
+        local kz = self.selection
         if kz then return {kz} end
         return {}
      end
