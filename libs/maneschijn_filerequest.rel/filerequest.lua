@@ -145,7 +145,19 @@ local function frq_init()
             b = (module.config.fieldfrontcolor or config.fieldfrontcolor)[3],
            br = (module.config.fieldbackcolor or config.fieldbackcolor)[1],
            bg = (module.config.fieldbackcolor or config.fieldbackcolor)[2],
-           bb = (module.config.fieldbackcolor or config.fieldbackcolor)[3]
+           bb = (module.config.fieldbackcolor or config.fieldbackcolor)[3],
+           action=function(self,kz)
+               --print("files:action(",kz,")")
+               if (not kz) or kz<0 or kz>self:Items() then return end
+               local f  = self:ItemText(kz)
+               local ff = cpath.."/"..f
+               if qff.IsDir(ff) then 
+                  cpath = ff
+                  n.gfiles((filter or {})[1],flags.hidden)
+               else
+                  gui.kids.buttons.kids.ok:action()
+               end   
+           end
         },
         buttons = {
            x="82%", y=2, w="16%",h="100%", kind='pivot',
@@ -304,6 +316,8 @@ end
 
 local function frq_GetFiles(filter,hidden)
     files:Clear()
+    cpath=replace(cpath,"\\","/") -- Only / even in Windows
+    cpath=replace(cpath,"//","/") -- Make sure no duplicate // exist, as they spook things up.
     if cpath=="~" then cpath=os.getenv("HOME") end
     local fls=cdglob(cpath,"*")
     local adds = {}
