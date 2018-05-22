@@ -26,6 +26,7 @@ local core = {
    maxpriority=3
 }
 
+local activegadget
 local sct = {'x','y','w','h'}
 local scd = {x='w',w='w',y='h',h='h'}
 
@@ -68,6 +69,10 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
             return t[i][2],t[i][1]
        end     
     end,
+    
+    Activate = function(self) activegadget=self end,
+    Deactivate = function(self,all) if activegadget==self or all then activegadget=nil end end,
+    Active = function(self) return activegadget==self end,
     
     free = function(self) -- VERY VERY important. Only release gadgets through the "free" method If you just put them to nil before releasing them you will get memory leaks do to a bug in Lua's garbage collector in 'cyclic references' in tables!
         assert(not self.cantkill , "You tried to kill a gadget you cannot kill");
@@ -248,6 +253,8 @@ local methoden = { -- This is a bunch of methods and subvariables ALL gadgets sh
                  maan[self.id.."_select"](self,data,data2)
               elseif self.Select then
                  self:Select(data,data2)
+              elseif self.select then
+                 self:select(data,data2)                 
               end 
      end,
      
