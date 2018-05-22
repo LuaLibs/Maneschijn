@@ -72,7 +72,7 @@ module.config = {
 }
 local config = copytable(module.config,true) -- When the user messes it up, I always go this backup :P
 
-local volumes,favorites,files,cpath,csave,diricon,filter,flags,cancelled,chosen
+local volumes,favorites,files,cpath,csave,diricon,filter,flags,cancelled,chosen,chbox
 
 local function frq_init()
   gui = {
@@ -168,6 +168,12 @@ local function frq_init()
            br = (module.config.fieldbackcolor or config.fieldbackcolor)[1],
            bg = (module.config.fieldbackcolor or config.fieldbackcolor)[2],
            bb = (module.config.fieldbackcolor or config.fieldbackcolor)[3],
+           select=function(self,kz)
+               if (not kz) or kz<0 or kz>self:Items() then return end
+               local f  = self:ItemText(kz)
+               chbox.text=f
+               chbox.pos=#f
+           end,
            action=function(self,kz)
                --print("files:action(",kz,")")
                if (not kz) or kz<0 or kz>self:Items() then return end
@@ -180,6 +186,15 @@ local function frq_init()
                   gui.kids.buttons.kids.ok:action()
                end   
            end
+        },
+        chosenfile = {
+          x='20%',y="26-",kind='textfield',
+            r = (module.config.fieldfrontcolor or config.fieldfrontcolor)[1],
+            g = (module.config.fieldfrontcolor or config.fieldfrontcolor)[2],
+            b = (module.config.fieldfrontcolor or config.fieldfrontcolor)[3],
+           br = (module.config.fieldbackcolor or config.fieldbackcolor)[1],
+           bg = (module.config.fieldbackcolor or config.fieldbackcolor)[2],
+           bb = (module.config.fieldbackcolor or config.fieldbackcolor)[3],           
         },
         buttons = {
            x="82%", y=2, w="16%",h="100%", kind='pivot',
@@ -288,6 +303,7 @@ local function frq_init()
   volumes   = gui.kids.volumes
   favorites = gui.kids.favorites  
   files     = gui.kids.files
+  chbox     = gui.kids.chosenfile
 end
 
 local function frq_GetVolumes()
