@@ -1,3 +1,13 @@
+--[[
+        textfield.lua
+	(c) 2018 Jeroen Petrus Broks.
+	
+	This Source Code Form is subject to the terms of the 
+	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
+	distributed with this file, You can obtain one at 
+	http://mozilla.org/MPL/2.0/.
+        Version: 18.05.23
+]]
 -- $USE libs/maneschijn_core
 -- $USE libs/qgfx
 -- $USE libs/nothing
@@ -34,6 +44,7 @@ function txt:CompileSizes()
 end
 
 function txt:onCreate()
+    -- $USE libs/utf8
    self:InitFont(self.font,self.fontsize)
    self:CompileSizes()
    self.br  =self. br or 40 /255
@@ -70,7 +81,7 @@ function txt:Draw()
    self.pos = self.pos or #self.text
    self:SetColor()
    local out=""
-   if self.pos>1          then out=     left (self.text,self.pos) end
+   if self.pos>0          then out=     left (self.text,self.pos) end
    if self:Active() then out = out .. self.cursor end
    if self.pos<#self.text then out=out..right(self.text,#self.text-self.pos) end
    love.graphics.print(out,r.bx,r.by)
@@ -85,6 +96,21 @@ function txt:mousepressed(x,y,b)
      end
 end
 
+function txt:textinput(t)
+    if not self:Active() then return end
+    if (#self.text)>=(self.maxlen or 20) then return end
+    if #t~=utf8.len(t) and (self.pos~=#self.text or #self.text==0) then return end
+    -- self.upos = utf8.offset(self.text,self.pos)
+    print("Got:",t,#t,self.pos,self.text)
+    local n = ""
+    if self.pos~=0 then n = left (self.text,self.pos) end
+    n = n .. t
+    if self.pos~=#self.text then n = n .. right(self.text,#self.text-self.pos) end
+    self.pos = self.pos + #t
+    self.text = n
+    print("Ret: ",self.text,self.pos,#self.text)
+end    
+    
 
 core.RegisterGadget("textfield",txt) 
 

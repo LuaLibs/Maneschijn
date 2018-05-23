@@ -6,7 +6,7 @@
 	Mozilla Public License, v. 2.0. If a copy of the MPL was not 
 	distributed with this file, You can obtain one at 
 	http://mozilla.org/MPL/2.0/.
-        Version: 18.05.20
+        Version: 18.05.23
 ]]
 
 -- $USE libs/maneschijn_gadgets
@@ -51,7 +51,11 @@ local cb = { handlers = {
    mousereleased=function (x,y,b,t,c)
       --if love.mousereleased then return love.mousereleased(x,y,b,t,c) end
       for m,g in gui:irmeth('mousereleased') do m(g,x,y,b,t,c) end
-    end
+    end,
+
+    textinput = function(t)
+      for m,g in gui:irmeth('textinput') do m(g,t) end
+    end    
    
 
 }}
